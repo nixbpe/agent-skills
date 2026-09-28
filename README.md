@@ -1,14 +1,15 @@
 # agent-skills
 
-Reusable prompts that nixbpe uses with coding agents: a shared `AGENTS.md`,
-slash commands, skills and subagent definitions. Copy what you need into your
-own project or home directory. MIT licensed.
+Reusable prompts that nixbpe uses with coding agents: a shared `AGENTS.md`
+with its rule files, slash commands, skills and subagent definitions. Copy
+what you need into your own project or home directory. MIT licensed.
 
 ## Layout
 
 | Path | What it holds | Where it goes when you use it |
 |------|---------------|-------------------------------|
-| `AGENTS.md` | Instructions for any agent that reads `AGENTS.md` (Codex, Cursor, Copilot and others). Holds the writing style rules for docs, reviews, commit messages, comments and replies, in Thai and English. | Project root |
+| `AGENTS.md` | Instructions for any agent that reads `AGENTS.md` (Codex, Cursor, Copilot and others). Points to the rule files under `rules/`. | Project root |
+| `rules/` | Rule files that `AGENTS.md` refers to. `writing-style.md` holds the writing style rules for docs, reviews, commit messages, comments and replies, in Thai and English. | Project root, next to `AGENTS.md` |
 | `CLAUDE.md` | Symlink to `AGENTS.md`, so Claude Code reads the same file. | Project root |
 | `commands/` | Slash commands, one Markdown file per command. | `.claude/commands/` or `~/.claude/commands/` |
 | `skills/` | Skills, one folder per skill with a `SKILL.md` inside. | `.claude/skills/` or `~/.claude/skills/` |
@@ -19,10 +20,11 @@ project on the machine.
 
 ## Use
 
-Copy the instruction file into a project:
+Copy the instruction file and its rules into a project:
 
 ```sh
 cp path/to/agent-skills/AGENTS.md .
+cp -r path/to/agent-skills/rules .
 ln -s AGENTS.md CLAUDE.md
 ```
 
