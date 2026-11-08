@@ -1,0 +1,132 @@
+# scripts/workbook_config.yaml
+# Project-agnostic configuration for md_to_workbook.py
+# Defines column number-format defaults, integer column headers, sheet/table registry,
+# and visual styling rules. Override per-project by passing --config when the markdown
+# uses different sheet/table names.
+
+defaults:
+  number_format:
+    "MD": "0.0"
+    "FTE": "0.00"
+    "%": "0.0%"
+    "Ratio": "0.0%"
+    "Date": "yyyy-mm-dd"
+    "Prob %": "0.0%"
+    "Percent": "0.0%"
+  integer_headers:
+    - Score
+    - P
+    - I
+    - Start Week
+    - End Week
+    - Duration Weeks
+    - Seq
+    - "#"
+
+  # Column widths
+  min_col_width: 12
+  max_col_width: 60
+  bullet_col_width: 60
+
+  # Header / sub-header / banding fills
+  header_fill: "1F4E78"
+  header_font_color: "FFFFFF"
+  sub_header_fill: "2E75B6"
+  sub_header_font_color: "FFFFFF"
+  alt_row_fill: "F2F2F2"
+  title_fill: "D9E1F2"
+
+  # Conditional format colors
+  pass_fill: "C6EFCE"
+  pass_font: "006100"
+  warning_fill: "FFEB9C"
+  warning_font: "9C5700"
+  fail_fill: "FFC7CE"
+  fail_font: "9C0006"
+
+  # Status header keywords that get conditional formatting applied
+  status_header_keywords:
+    - "Check"
+    - "Status"
+    - "Result"
+
+  # Bullet column header keywords (force wrap_text + larger row height)
+  bullet_header_keywords:
+    - "Implementation Notes"
+    - "Interface Count"
+    - "Notes"
+    - "Mitigation / Decision Needed"
+    - "External Cause / Risk"
+    - "External Cause / ความเสี่ยง"
+
+  # Tab colors per sheet keyword
+  tab_colors:
+    README: "1F4E78"
+    Sizing: "C00000"
+    Risk: "C00000"
+    Timeline: "2E75B6"
+
+  # High-impact cells get bold + slightly larger font
+  high_impact_field_names:
+    - "Raw MD"
+    - "Adjusted MD"
+    - "Delivery Baseline"
+    - "Management Reserve"
+    - "Planning Total"
+    - "P25"
+    - "P50"
+    - "P75"
+    - "P90"
+
+# Sheet ordering and Excel Table registration
+# heading: substring that must appear in the H2 heading text
+# tables: list of Excel Table names (one per H3 sub-table, in order)
+sheets:
+  - heading: "Sheet 0"
+    short_name: "README"
+    tables:
+      - name: tbl_readme_control
+      - name: tbl_validation_summary
+  - heading: "Sheet 1"
+    short_name: "Assumption Confirmation"
+    tables:
+      - name: tbl_assumption_confirmation
+  - heading: "Sheet 2"
+    short_name: "In-Out Scope"
+    tables:
+      - name: tbl_in_out_scope
+  - heading: "Sheet 3"
+    short_name: "Architecture"
+    tables:
+      - name: tbl_architecture
+  - heading: "Sheet 4"
+    short_name: "Feature Inventory"
+    tables:
+      - name: tbl_feature_inventory
+  - heading: "Sheet 5"
+    short_name: "Backlog Inventory"
+    tables:
+      - name: tbl_backlog_inventory
+  - heading: "Sheet 6"
+    short_name: "UI API Inventory"
+    tables:
+      - name: tbl_ui_api_inventory
+  - heading: "Sheet 7"
+    short_name: "Estimate Sizing"
+    tables:
+      - name: tbl_sizing_features
+      - name: tbl_sizing_integrations
+      - name: tbl_sizing_non_dev
+      - name: tbl_sizing_summary
+  - heading: "Sheet 8"
+    short_name: "Timeline Resource"
+    tables:
+      - name: tbl_resource_matrix
+      - name: tbl_task_timeline
+  - heading: "Sheet 9"
+    short_name: "Risk"
+    tables:
+      - name: tbl_risk_register
+      - name: tbl_range_reserve
+      - name: tbl_scenarios
+      - name: tbl_final_snapshot

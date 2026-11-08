@@ -2,11 +2,13 @@
 
 Personal instructions and reusable resources for Claude Code and pi coding agent.
 Keep one local checkout, share skills, and install agent-specific resources into
-your home directory. Python 3.9 or newer is required; no Python dependencies or
-npm publishing are needed.
+your home directory. The installer requires Python 3.9 or newer and no Python
+dependencies. Workbook export has separate Python requirements listed below.
+No npm publishing is needed.
 
-The resource directories start empty. Installation currently provides the
-personal writing rules and registers the checkout with pi.
+The repository includes the Orbit planning suite: 1 workflow router, 12 action
+skills and 8 shared principles. Commands, Claude subagents and pi prompt
+templates remain empty.
 
 ## Layout
 
@@ -32,6 +34,92 @@ Claude resources are linked individually. pi loads `skills/` and
 `pi/prompts/*.md` through the `packages` array in `~/.pi/agent/settings.json`.
 The installer adds the local package declaration without invoking pi or
 installing dependencies. It does not create duplicate pi skill symlinks.
+
+## Orbit planning skills
+
+Start with [Orbit cost estimate](skills/orbit-cost-estimate/SKILL.md). The guide
+is written in Thai for people who prepare and review estimates. It explains
+which action to choose, what inputs it needs and where each result is written.
+The suite plans scope, effort, duration, resources and risk. It does not
+calculate financial costs, rate cards or selling prices.
+
+### Reading order
+
+1. Open the workflow guide to choose an action.
+2. Read that action's `SKILL.md` for prerequisites, steps, outputs and stop rules.
+3. Read its linked principles for shared decisions.
+4. Open `references/contract.md` for the complete schema, formulas and templates.
+
+The short guides use the same six sections: when to use the action, required
+inputs, required rules, workflow, outputs and stop conditions, and an example
+request. Technical terms, artifact names, IDs and contract headings retain
+their original spelling.
+
+### Choose an action
+
+| Goal | Skill | Planning artifact |
+|---|---|---|
+| Analyze a TOR or RFP | [orbit-analyze-tor](skills/orbit-analyze-tor/SKILL.md) | Step 00 |
+| Define intake and scope | [orbit-define-scope](skills/orbit-define-scope/SKILL.md) | Step 01 |
+| Design architecture and constraints | [orbit-design-architecture](skills/orbit-design-architecture/SKILL.md) | Step 02 |
+| Inventory functional features | [orbit-inventory-features](skills/orbit-inventory-features/SKILL.md) | Step 03.1 |
+| Build backlog and screen/API inventory | [orbit-build-backlog](skills/orbit-build-backlog/SKILL.md) | Step 03.2 |
+| Build work packages and ownership | [orbit-build-wbs](skills/orbit-build-wbs/SKILL.md) | Step 03.3 |
+| Estimate raw effort and review it | [orbit-size-effort](skills/orbit-size-effort/SKILL.md) | Step 04 Estimate and Review |
+| Plan staffing, capacity and schedule | [orbit-plan-resources](skills/orbit-plan-resources/SKILL.md) | Step 05 |
+| Assess risk and finalize planning | [orbit-assess-risk](skills/orbit-assess-risk/SKILL.md) | Step 06 |
+| Prepare a workbook for review | [orbit-prepare-workbook](skills/orbit-prepare-workbook/SKILL.md) | Workbook Markdown |
+| Export a reviewed workbook | [orbit-export-workbook](skills/orbit-export-workbook/SKILL.md) | XLSX |
+| Draw an approved architecture | [orbit-draw-architecture](skills/orbit-draw-architecture/SKILL.md) | SVG and PNG |
+
+Actions can run directly when their approved input artifacts are available.
+They do not require invoking the router first. Install all 21 skills together
+because actions load shared principles and references from sibling directories.
+Do not copy a single `SKILL.md` without its dependencies.
+
+Each action stops after its own output. The router advances the planning
+workflow only under the recorded authorization and after quality gates pass.
+Preparing workbook Markdown and exporting XLSX have a separate review gate.
+Architecture diagrams need approved architecture, not a completed Step 06.
+
+### Invoke a skill
+
+After installation, use `/orbit-cost-estimate` in Claude Code or
+`/skill:orbit-cost-estimate` in pi. Replace the router name with an action name
+to invoke it directly.
+
+For example, give the selected skill this request:
+
+> ใช้ approved artifacts ใน output/ ประเมิน Raw MD แล้วส่ง Estimate และ Review
+> เป็นคู่ให้ตรวจ อย่าทำ resource planning ต่อ
+
+Project inputs and `output/` belong to the working project. Bundled contracts,
+scripts and reference data resolve from the installed skill directory.
+No skill requires the original source checkout.
+
+### Optional runtime requirements
+
+| Action | Requirement |
+|---|---|
+| TOR analysis with non-text input | Docling conversion under the action's source-quality contract |
+| Workbook export | Python 3.10+ and the bundled [requirements.txt](skills/orbit-export-workbook/scripts/requirements.txt), installed in a suitable environment |
+| Workbook recalculation | Excel or LibreOffice; otherwise report `Not recalculated` |
+| Diagram generation | A project-local SVG renderer and an SVG viewer; `rsvg-convert` for PNG export |
+
+The workbook converter is bundled with the export skill. Always pass an
+explicit project config with source-derived phase bands. The diagram skill
+guides creation of a project-local renderer from approved nodes and edges;
+it does not ship a fixed customer layout as a generic parser.
+
+### Maintain the suite
+
+Shared policy lives in `principle-orbit-*`. Each action owns its detailed
+contract. The router owns selection and sequencing, not duplicate formulas.
+Optional architecture profiles are references to evaluate, not required stacks.
+
+The separation follows [pstack](https://github.com/backnotprop/pstack).
+Users do not need pstack installed to use Orbit.
+
 
 ## Use
 
