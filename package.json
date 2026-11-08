@@ -1,0 +1,9 @@
+{
+  "name": "personal-agent-skills",
+  "version": "0.1.0",
+  "private": true,
+  "pi": {
+    "skills": ["./skills"],
+    "prompts": ["./pi/prompts/*.md"]
+  }
+}

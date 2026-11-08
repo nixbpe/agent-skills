@@ -1,5 +1,8 @@
 # Agent instructions
 
+These instructions apply to maintaining this repository. Personal instructions
+installed into other projects come from `instructions/personal.md` and `rules/`.
+
 ## Writing style
 
 Follow `rules/writing-style.md` for every piece of prose you write: docs, agent
