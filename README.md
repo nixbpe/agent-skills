@@ -95,7 +95,6 @@ For example, give the selected skill this request:
 
 Project inputs and `output/` belong to the working project. Bundled contracts,
 scripts and reference data resolve from the installed skill directory.
-No skill requires the original source checkout.
 
 ### Optional runtime requirements
 
@@ -108,18 +107,13 @@ No skill requires the original source checkout.
 
 The workbook converter is bundled with the export skill. Always pass an
 explicit project config with source-derived phase bands. The diagram skill
-guides creation of a project-local renderer from approved nodes and edges;
-it does not ship a fixed customer layout as a generic parser.
+guides creation of a project-local renderer from approved nodes and edges.
 
 ### Maintain the suite
 
 Shared policy lives in `principle-orbit-*`. Each action owns its detailed
 contract. The router owns selection and sequencing, not duplicate formulas.
 Optional architecture profiles are references to evaluate, not required stacks.
-
-The separation follows [pstack](https://github.com/backnotprop/pstack).
-Users do not need pstack installed to use Orbit.
-
 
 ## Use
 

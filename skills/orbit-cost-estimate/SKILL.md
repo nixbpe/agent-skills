@@ -104,5 +104,3 @@ Core planning ใช้การอ่านและเขียน artifacts. 
 ## สำหรับผู้ดูแลชุด skills
 
 แก้กฎร่วมที่ principle เจ้าของ. แก้ schema, สูตรเฉพาะขั้น และ template ที่ action contract เจ้าของ. เก็บชื่อ artifacts, headings, IDs และ status words ที่ downstream อ้างอิงไว้.
-
-หลักการออกแบบอ้างอิง [pstack](https://github.com/backnotprop/pstack) แต่ชุดนี้ไม่ต้องติดตั้ง pstack เพื่อทำงาน. กฎ engineering ของ pstack ไม่ใช่ prerequisites ของผู้ใช้ Orbit.

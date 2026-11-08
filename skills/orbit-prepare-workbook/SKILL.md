@@ -15,7 +15,7 @@ description: "เตรียม Markdown workbook จาก planning artifacts 
 - Revision, approval state และ approval basis ของทุก source รวมถึง scope basis และข้อมูลที่ใช้คำนวณจริง
 - Step 00 เฉพาะ clarity score, assumptions และ traceability ที่ downstream อ้างถึงแล้ว
 
-ทุก `output/` อ้างอิง working project ส่วน links ใน skill อ้างอิง installed skill ไม่ต้องมี source checkout เดิม
+ทุก `output/` อ้างอิง working project ส่วน links ใน skill อ้างอิง installed skill
 
 ## กฎที่ต้องอ่าน
 

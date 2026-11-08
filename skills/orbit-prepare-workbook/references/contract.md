@@ -501,13 +501,13 @@ Key formulas: `Score = P × I`; `Expected MD = Prob % × Effort Impact MD`; `Del
 
 ### 4.10 Style Polish (applies to all sheets)
 
-The script MUST apply consistent visual polish so the workbook is presentable to stakeholders without further editing, so tables read as static reports rather than interactive grids (per user directive — see the Filters / Freeze panes rows below).
+The script MUST apply the formatting rules below so stakeholders can read the workbook without further editing. Tables are static reports. Follow the Filters and Freeze panes rules below.
 
 | Aspect | Rule |
 | --- | --- |
 | Header row | Fill `#1F4E78` (corporate navy), white bold Calibri 10, centered, border bottom 1px |
 | Sub-table header (when stacked) | Fill `#2E75B6` (lighter navy), white bold Calibri 10, centered |
-| Header height | 18pt (compact; was 24pt) |
+| Header height | 18pt |
 | Data rows | Calibri 10, default row height 15pt (compact); text-cells top-aligned with wrap; numeric-cells middle-right-aligned |
 | Row fill | **All-white** background on every data row (no alternating banding). Visual separation comes from black cell borders, not fill color. |
 | Cell borders | Thin black border on all 4 sides of every header and data cell within tables (header + body). Non-table areas have no borders. |

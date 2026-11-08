@@ -1,6 +1,6 @@
 ---
 name: orbit-draw-architecture
-description: "วาด solution architecture diagram จาก approved architecture artifact ด้วย project-local renderer และ source-backed nodes/edges. ใช้เมื่อขอ SVG และ PNG ของ architecture ที่อนุมัติแล้ว พร้อม provider grouping, corridor routing และ actual visual verification. ไม่มี fixed project layout และไม่เปลี่ยน scope หรือ baseline."
+description: "วาด solution architecture diagram จาก approved architecture artifact ด้วย project-local renderer และ source-backed nodes/edges. ใช้เมื่อขอ SVG และ PNG ของ architecture ที่อนุมัติแล้ว พร้อม provider grouping, corridor routing และ actual visual verification. ไม่เปลี่ยน scope หรือ baseline."
 ---
 
 # วาด architecture จากหลักฐานที่อนุมัติแล้ว
@@ -16,7 +16,7 @@ description: "วาด solution architecture diagram จาก approved archite
 - Runtime สำหรับ project-local renderer เช่น Python 3 ที่ใช้ standard library สร้าง SVG ได้
 - SVG viewer หรือ browser สำหรับ offline visual inspection และ `rsvg-convert` สำหรับ PNG ถ้ามี
 
-ไม่ต้องมี source checkout, icon cache หรือ fixed renderer เดิม Neutral vector glyphs เป็นทางเลือกที่ไม่ต้องพึ่ง network ส่วน provider icons ต้องมี provenance และฝังไว้ใน SVG
+Neutral vector glyphs เป็นทางเลือกที่ไม่ต้องพึ่ง network ส่วน provider icons ต้องมี provenance และฝังไว้ใน SVG
 
 ## กฎที่ต้องอ่าน
 
@@ -43,7 +43,7 @@ description: "วาด solution architecture diagram จาก approved archite
 
 ส่ง SVG, PNG เมื่อสร้างและตรวจได้จริง, project-local renderer และ review record ที่มี source revision, commands, checklist evidence และข้อจำกัด จากนั้นหยุดให้ผู้ใช้ review ไม่เรียก planning action อื่นและไม่อนุมัติ architecture แทนผู้ใช้
 
-ทุก `output/` เป็น path ใน working project ส่วน [contract](references/contract.md) เป็น bundled reference ของ installed skill ภาพและ renderer ต้องทำงานได้โดยไม่อ้าง source checkout เดิม
+ทุก `output/` เป็น path ใน working project ส่วน [contract](references/contract.md) เป็น bundled reference ของ installed skill
 
 ## ตัวอย่างคำขอ
 

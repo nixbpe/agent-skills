@@ -10,7 +10,7 @@ The converter only emits tables. Any Markdown prose that must appear in Excel, i
 
 ## Bundled runtime and paths
 
-- [md_to_workbook.py](../scripts/md_to_workbook.py) is the existing converter, not a new export framework.
+- [md_to_workbook.py](../scripts/md_to_workbook.py) converts workbook Markdown to XLSX.
 - [requirements.txt](../scripts/requirements.txt) requires `openpyxl>=3.1`, `pyyaml>=6.0`, and `markdown-it-py>=3.0` in the selected Python environment. Use Python 3.10 or newer.
 - [workbook_config.yaml](../scripts/workbook_config.yaml) provides sheet mappings and formatting defaults. It is a template, not approved project phase-band evidence.
 
