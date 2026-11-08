@@ -46,9 +46,15 @@ Always pass `--config` explicitly. The public CLI retains the relative default `
 
 The custom line-walker reads H2 headings as sheets and H3 backticked `tbl_*` names as table identities. `markdown-it-py` is imported but not used for parsing. Fenced code is skipped. Header text drives formats. The parser pads short rows and truncates long rows, so independently check Markdown row widths before conversion. An H2 without tables is skipped without `--strict`.
 
-Tables become styled cell ranges, not Excel Tables or named ranges. Multiple tables stack with one blank row between them. A resource matrix adds one phase-band row above its header. The task timeline does not add that row. Account for both cases in concrete A1 addresses. `active` cells in the task timeline become fill-only cells; the keyword color must resolve for the intended task. No filters or freeze panes are created. Long text wraps at fixed row heights and can be clipped. Print setup repeats rows `1:2`, which must be reviewed per sheet.
+Tables become styled cell ranges, not Excel Tables or named ranges. Multiple tables stack with one blank row between them. A resource matrix adds one phase-band row above its header. The task timeline does not add that row. Account for both cases in concrete A1 addresses. `active` cells in the task timeline become fill-only cells; the keyword color must resolve for the intended task. No filters or freeze panes are created.
 
-Number formats come from the config. Default header conventions are MD `0.0`, FTE `0.00`, percent or Ratio `0.0%`, Date `yyyy-mm-dd`, and configured Score/P/I/Start Week/End Week/Duration Weeks/Seq integer headers. All sheet schemas and remaining visual requirements stay in canonical §4; do not maintain a duplicate schema here.
+Headers wrap, or rotate 90° when a word cannot fit the fixed column width. The converter estimates row heights after final widths, including possible text literals in formulas, with a 409pt cap. It repeats headers only on single-table sheets, using both rows for a resource matrix. Stacked tables do not repeat another table's header. These estimates do not model exact font metrics, Thai line breaking or application-specific rendering. Inspect final rendered sheets and print pages for clipped notes, missing glyphs, unreadable headers and incorrect repeated rows.
+
+Number formats come from the config. Default header conventions are MD `0.0`, FTE `0.00`, percent or Ratio `0.0%`, Date `yyyy-mm-dd`, and configured Score/P/I/Start Week/End Week/Duration Weeks/Seq integer headers. The converter preserves task timeline `#` identifiers and headers ending in ` ID` as text even when integer config matches, so identifiers such as `2.10` retain their spelling. Resource matrix `#` remains a numeric row sequence. All sheet schemas and remaining visual requirements stay in canonical §4; do not maintain a duplicate schema here.
+
+`defaults.font_name` defaults to `Noto Sans Thai`. Confirm installation and glyph coverage in the environment that renders the delivered workbook. A font name in XLSX does not install or embed the font. Record the actual rendering application, font availability and visual inspection evidence. If inspection is unavailable, disclose `Not visually verified` rather than claim readable layout.
+
+Headless LibreOffice can use a different fontconfig from the shell. A successful `fc-match` is insufficient evidence. If rendered text loses glyphs, inspect the renderer's font configuration and embedded PDF fonts. Select a fontconfig containing the installed fonts through `FONTCONFIG_FILE` when needed, and record the environment used. Do not compensate by silently changing workbook content or prescribed column widths.
 
 ## Formula safety and calculation status
 
@@ -56,16 +62,43 @@ Backtick-wrapped leading-`=` expressions become formula text. The converter neit
 
 The converter removes the apostrophe from literal `'=...`; openpyxl can then treat it as a formula. Do not rely on apostrophe escaping for untrusted text. Check source strings beginning with `=`, `+`, `-` or `@` separately from intentionally authored formulas and numeric inputs. Stop for safe literal handling, or use an explicit non-formula textual prefix in the reviewed Markdown. Do not execute untrusted source text as formulas.
 
-When Excel or LibreOffice is available, recalculate the actual output and inspect cached values and formula errors. Independently reconcile source totals and all VAL-01 through VAL-14. When no calculation engine is available, put `Not recalculated` in both Markdown and the README control table, list independent numeric reconciliations and unresolved formula warnings, then convert that representation. File creation alone is not a formula-check pass. Metadata or status changes must remain synchronized with Markdown; rerun conversion when Markdown changes, and recalculate the delivered file again if claiming recalculated status.
+When Excel or LibreOffice is available, recalculate the actual output and inspect cached values and formula errors. Independently reconcile source totals and all VAL-01 through VAL-14, then run the verifier below. When no calculation engine is available, put `Not recalculated` in both Markdown and the README control table, list independent numeric reconciliations and unresolved formula warnings, then convert and verify that representation. File creation alone is not a formula-check pass. Metadata or status changes must remain synchronized with Markdown. Rerun conversion when Markdown changes, then recalculate, visually inspect and verify the delivered file again.
+
+## Independent workbook verifier
+
+Run the read-only [verify_workbook.py](../scripts/verify_workbook.py) after the final recalculation/save, using the same reviewed Markdown and explicit project config as conversion.
+
+```bash
+python3 "$EXPORT_SKILL/scripts/verify_workbook.py" \
+  --input output/estimation_workbook.md \
+  --workbook output/estimation_workbook.xlsx \
+  --config output/workbook_config.yaml \
+  --output output/workbook_verification.json
+```
+
+The verifier reuses the converter's Markdown parser and reads formula cells and cached values from the same delivered XLSX. It derives implemented numeric expectations from detail rows and canonical controls, not author-written Pass cells or model-supplied expected totals. It does not evaluate formulas, edit the workbook or replace semantic source review. Without recalculation, run it anyway and retain missing-cache findings.
+
+Automated numeric coverage includes per-role/bucket Raw MD, role allowances, effective delivery capacity, demand-derived Average FTE, ranges from Adjusted MD and Recommended Contingency, and reserve policy. Independently review the remaining contract checks. The verifier does not reconstruct risk probability/impact derivation, recommended-contingency components, QA test cases, PM calendar derivation or warranty schedule capacity. It also does not prove approval, actor semantics, full schema compliance or visual readability. These limitations remain even when its exit code is `0`.
+
+The JSON report contains keyed findings with expected, actual and cell evidence, input hashes, and coverage limitations. Keep the report with the delivered file and record the exact command and exit code. A changed Markdown, config or workbook invalidates that report.
+
+| Verifier exit | Meaning |
+| --- | --- |
+| `0` | All implemented checks Pass. Unimplemented semantic or visual checks still require separate evidence. |
+| `1` | Warning findings, no Fail. Disclose them under canonical §4.0.2. |
+| `2` | At least one Fail. Stop publication as verified output and correct the owning source/artifact. |
+| `3` | Input or runtime error. Surface diagnostics; do not claim verification completed. |
+
+Propagate the highest unresolved result through affected validation rows, README Validation Summary and final handoff. Use the canonical §4.0.2 Note format with exact row/cell evidence and rationale/action. Acknowledging a Warning does not erase it. If disclosure requires a Markdown change, regenerate, recalculate and rerun the verifier so final hashes match. Retain independent review of source approvals, operation-specific actors, assumptions, semantic coverage and visual layout.
 
 ## Verification before publication
 
 1. Check approved source revisions and reviewed Markdown identity. Compare exact sheet count/order, H2/H3 names, headers, row widths, IDs, populated rows and any authorized additions against canonical §3-§5 before invoking the converter.
 2. Review the explicit project config, source-derived phase bands, role coverage and address layout. Preserve scenario separation, QA test-case inputs, additional approved roles, PM derivation, warranty and reserve treatment.
 3. Run conversion and retain the command, config path/revision, input revision, exit code and diagnostics as conversion provenance. Do not insert conversion success provenance before the attempt.
-4. Open the resulting workbook. Inspect sheets, formulas, actual row coordinates, cell types, phase bands, timeline fills, status formatting, clipped text and meaningful print headers. A success log or a valid ZIP alone is not verification.
-5. Recalculate when available, inspect formula errors and computed results, and evaluate every VAL check with source evidence. Preserve `Not recalculated` and warnings otherwise. Do not infer semantic atomicity or acceptance from populated cells.
-6. Report the actual file path, source revision, calculation engine/status, verification performed and remaining warnings. Stop for review. Do not invoke another action.
+4. Inspect the resulting workbook in the actual rendering application or rendered pages. Check sheets, formulas, row coordinates, identifier spelling/types, phase bands, timeline fills, status formatting, glyph coverage, clipped text and meaningful print headers. Inspect again after the final layout adjustment. A success log, configured font name or valid ZIP alone is not visual verification.
+5. Recalculate when available, then run the verifier against the delivered workbook and inspect its report. Preserve `Not recalculated` and warnings otherwise. Evaluate uncovered VAL checks with independent source evidence. Do not infer semantic atomicity, actor correctness, assumption confirmation or acceptance from populated cells.
+6. Report the actual file/report paths, source revision, calculation engine/status, visual inspection evidence, verifier command/exit, coverage limitations and remaining row/cell warnings. Stop for review. Do not invoke another action.
 
 ## Errors and exit codes
 

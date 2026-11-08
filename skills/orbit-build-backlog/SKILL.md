@@ -5,6 +5,8 @@ description: "แตก feature inventory ที่อนุมัติแล�
 
 # แตก backlog และ UI/API inventory
 
+ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+
 ## ใช้เมื่อ
 
 ใช้เมื่อ Step 03.1 อนุมัติแล้ว และต้องการแปลง atomic subfeature เป็น backlog พร้อม screen/API coverage สำหรับสร้าง WBS
@@ -17,7 +19,7 @@ description: "แตก feature inventory ที่อนุมัติแล�
 
 ## กฎที่ต้องอ่าน
 
-อ่าน [contract ฉบับเต็ม](references/contract.md) ก่อนทำงานทุกครั้ง รวม templates, gates และ appendices และโหลดหลักการต่อไปนี้แม้เรียก action โดยตรงโดยไม่ผ่าน router
+อ่าน [contract ฉบับเต็ม](references/contract.md) รวม templates, gates และ appendices พร้อม principles ต่อไปนี้ตามวิธีอ่านร่วม ใช้ไฟล์ที่อ่านครบแล้วและไม่เปลี่ยนซ้ำได้.
 
 - [หลักฐานและ traceability](../principle-orbit-evidence-and-traceability/SKILL.md)
 - [การอนุมัติแต่ละ revision](../principle-orbit-explicit-approval/SKILL.md)

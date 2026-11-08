@@ -5,6 +5,8 @@ description: "วาด solution architecture diagram จาก approved archite
 
 # วาด architecture จากหลักฐานที่อนุมัติแล้ว
 
+ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+
 ## ใช้เมื่อ
 
 ต้องการภาพประกอบ architecture ที่มี approved artifact อยู่แล้ว เช่น Step 02 งานนี้ไม่เลือก architecture ใหม่ ไม่เพิ่ม components และไม่เปลี่ยน scope, effort หรือ baseline

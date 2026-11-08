@@ -5,6 +5,8 @@ description: "จัดทำ functional feature inventory จาก scope แ�
 
 # จัดทำรายการ feature และ atomic subfeature
 
+ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+
 ## ใช้เมื่อ
 
 ใช้เมื่อ scope และ architecture อนุมัติแล้ว และต้องการกำหนดขอบเขต functional feature ก่อนแตก backlog หรือทบทวนการจัดกลุ่ม feature เดิม
@@ -17,7 +19,7 @@ description: "จัดทำ functional feature inventory จาก scope แ�
 
 ## กฎที่ต้องอ่าน
 
-อ่าน [contract ฉบับเต็ม](references/contract.md) ก่อนทำงานทุกครั้ง รวม templates, gates และ appendices และโหลดหลักการต่อไปนี้แม้เรียก action โดยตรงโดยไม่ผ่าน router
+อ่าน [contract ฉบับเต็ม](references/contract.md) รวม templates, gates และ appendices พร้อม principles ต่อไปนี้ตามวิธีอ่านร่วม ใช้ไฟล์ที่อ่านครบแล้วและไม่เปลี่ยนซ้ำได้.
 
 - [หลักฐานและ traceability](../principle-orbit-evidence-and-traceability/SKILL.md)
 - [การอนุมัติแต่ละ revision](../principle-orbit-explicit-approval/SKILL.md)

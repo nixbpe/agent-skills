@@ -72,7 +72,16 @@ Layout: control key-value block + validation summary block on the same sheet.
 
 Required `Field` rows: Workbook Name, Project Name, Version, Generated Date, Source Artifacts, Approved Baseline Scope, Approval State, Approval Basis, No-Pricing Rule, Raw MD, Adjusted MD, Delivery Baseline, Management Reserve, Planning Total, P25, P50, P75, P90, Confidence, Integration Count, External Risk Count, Top Risks, Re-estimation Triggers, Baseline-vs-Scenario Note, Validation Summary, Calculation Status.
 
-Also include sourced control rows for Focus Factor, working-day constants, role rework/buffer rates and MD, PM Base MD, warranty effort/horizon, and selected delivery basis. Derive Adjusted MD and capacity validation from those rows and the matrix. Keep calibration/review evidence as notes referencing Step 04 Review. These rows preserve calculation inputs without extra sheets or unsupported tables.
+Use these exact numeric control names with source references, not invented inputs or totals.
+
+- `Working Days per Week`, `Focus Factor`, and `Delivery Weeks` define the common delivery horizon.
+- For each source role, include `{role} Raw MD`, `{role} Rework Rate`, `{role} Buffer Rate`, `{role} Adjusted MD`, `{role} Warranty Adjusted MD`, and `{role} Delivery Adjusted MD`. Preserve sourced rework/buffer MD, `PM Base MD`, and warranty effort/horizon in additional control rows. Do not invent a role adjustment or treat PM Base MD as proof of calendar-derived PM.
+- `{role} Average FTE` = `{role} Delivery Adjusted MD` ÷ (`Delivery Weeks` × `Working Days per Week` × `Focus Factor`). `Average FTE` is the sum of those demand-derived role values. Delivery demand excludes separately scheduled warranty.
+- `{role} Allocation Average FTE` = that role's matrix `FTE-Weeks` ÷ `Delivery Weeks`. `Allocation Average FTE` uses total allocated FTE-Weeks over the same horizon. Keep these distinct from demand-derived Average FTE. Include them when the source reports allocation averages, and disclose any separate warranty horizon.
+- Preserve `Recommended Contingency MD`, `Selected Commitment Uplift`, `Contingency MD`, and `Selected Delivery Basis` from Step 06. The last field contains the selected `P25`, `P50`, `P75`, or `P90` label with its decision evidence in Source Ref/Note.
+- `Reserve Rate` and `Reserve Denominator` make reserve arithmetic explicit. The denominator is exactly `Delivery Baseline` or `Adjusted MD`, as approved. Step 06 normally uses Delivery Baseline. A different basis needs its source exception, not an export-time change.
+
+Derive arithmetic with resolved cell references. Missing calculation inputs remain disclosed gaps, not zero defaults. Keep calibration/review evidence in notes referencing Step 04 Review.
 
 #### 4.0.2 `tbl_validation_summary`
 
@@ -83,9 +92,13 @@ Also include sourced control rows for Focus Factor, working-day constants, role 
 | C | Severity | High / Medium / Low | `High` | text |
 | D | Note | Evidence or rationale | `QA within FE+BE cross-check for all rows` | text |
 
+Roll up every applicable row check with `Fail > Warning > Pass`; a check for Fail alone loses Warning. `Validation Summary` in `tbl_readme_control` must show the highest unresolved result. In each affected validation row's Note, use `finding=<key>; row=<stable ID>; cell=<sheet!address>; expected=<value/rule>; actual=<value>; source=<artifact revision/section>; action=<next action>`. Use `rationale=<reason>` where no corrective action is required. Include the verifier finding key when available and an exact row ID or cell reference. Label unavailable evidence explicitly. Preserve these warnings in the final handoff. A rationale or approval does not turn an unresolved Warning into Pass.
+
 ### 4.1 `Assumption Confirmation` — `tbl_assumption_confirmation`
 
 One row per assumption / decision / confirmation / open question. Qualify OQ IDs by originating step, such as `OQ-01(Step02)`. Consolidate refined ASM/DEC rows by their stable project-wide ID and cite the source delta. A closed item is not overdue merely because its old due date has passed.
+
+Approval to use an assumption is not confirmation of its content. Preserve each source ASM ID, wording, owner, fallback, and evidence status. Keep `Assumption` in Status and record any authorized default in Fallback Default/notes, separately from Included baseline treatment. Change to `Confirmed` only with direct confirming evidence.
 
 | Col | Header | Description | Example value | Format guide |
 | ----- | --------------------- | ---------------------------------------------------------------------------- | ------------------------------------------- | -------------- |
@@ -257,6 +270,7 @@ A combined export of the source SCR/API inventory, optional sitemap, and integra
 - Every active baseline BI must have its source UI/API mapping or the explicit N/A reason from Step 03.2. A non-UI/non-API subfeature is not automatically an orphan.
 - Every `INT-` in `Architecture` should appear in at least one `API` row's `INT Ref` OR in a dedicated `Integration Coverage` row.
 - Every UI/API row should have either a matching UI/API 5W1H row or a fully populated 5W1H Summary cell. Pick one convention per project and keep it, so reviewers do not have to guess where the 5W1H lives.
+- Derive Who from the specific operation. Distinguish the initiating user, administrator, service account, external system, and background worker. Copy the actor/system from the matching source operation or subfeature, not a generic actor across all rows. Cite the source revision, section and SCR/API/subfeature ID in existing Notes and 5W1H metadata. Missing or contradictory actor evidence is a finding, not permission to invent an actor.
 - A UI row with Reuse=0 has no duplicate FE implementation MD. Preserve actual WBS/test/integration mapping and canonical SCR-ID; N/A is valid only when the source gives a reason. Reuse does not exclude the entire subfeature from sizing.
 - `Sitemap` rows are organisational only; they MUST NOT carry Cx / Reuse / WBS Ref values. Their job is to give reviewers a tree view of how `UI` rows hang together.
 - `Integration Coverage` rows are the auditable link between `Architecture` (INT inventory) and the consumers; do not double-size them, because they exist only for VAL-09 coverage.
@@ -276,7 +290,7 @@ One row per approved baseline atomic subfeature. Derive SG from `Feature Invento
 | C | Module | Feature group | `User Administration` | text |
 | D | Feature Name | Short feature title | `Authentication & Login (SSO + OTP)` | text |
 | E | Subfeature Name | User-visible action / capability | `เมื่อพนักงานคลิก login ระบบ redirect ไป Azure AD แล้วสร้าง session ให้อัตโนมัติ` | text |
-| F | Implementation Notes | Bullets of UI Pages / Components / APIs / Workers / Backend Logic / Integrations. **Render as real newline-separated bullets in Excel** (use `\n- ` between items, NOT `<br>`); the script writes one cell with multi-line text + wrap_text + fixed row height; long cells may be clipped | `- [UI] Login Page (SCR-014)\n- [API] Login (API-021)\n- [INT] Azure AD (INT-03)` | bullet list (newline-separated in cell) |
+| F | Implementation Notes | Bullets of UI Pages / Components / APIs / Workers / Backend Logic / Integrations. Render as real newline-separated bullets in Excel using `\n- `, not `<br>`. Wrapped row heights are estimated after final column widths, capped at 409pt. Inspect the rendered cells for clipping. | `- [UI] Login Page (SCR-014)\n- [API] Login (API-021)\n- [INT] Azure AD (INT-03)` | bullet list (newline-separated in cell) |
 | G | UX/UI | UX/UI Raw MD | `0.5` | number 0.0 |
 | H | BA | BA Raw MD | `1.0` | number 0.0 |
 | I | SA | SA Raw MD | `1.0` | number 0.0 |
@@ -346,7 +360,7 @@ Required `Bucket` rows: `SG1 Features`, `SG2 Features`, `Integration`, `Non-Dev`
 
 ### 4.8 `Timeline Resource`
 
-Aligned to Step 05 (`output/step_05_resource_plan.md` §4 + §5). **TWO tables only**, both sharing the same weekly-column structure with a phase-band header above the week labels:
+Aligned to Step 05 (`output/step_05_resource_plan.md` §4 + §5). TWO tables share the same weekly columns. Only the resource matrix has an extra phase-band header row.
 1. **Weekly Resource Matrix** — one row per role × week columns W1..Wn
 2. **Task / Phase Timeline** — one row per task × the same week columns W1..Wn, with cells color-coded by phase band when active
 
@@ -364,7 +378,7 @@ Derive `defaults.phase_bands` from the Step 05 phase-band row. Include labels/we
 
 | Col | Header | Description | Example value | Format guide |
 | ----- | --------------- | ------------------------------------------------------------------- | ------------------- | ----------------- |
-| A | # | Row number | `1` | number integer |
+| A | # | Numeric row sequence | `1` | number integer |
 | B | Role | Role name (PM, UX/UI, BA, SA, FE, BE, DevOps, QA, Change) | `PM` | text |
 | C… | W1, W2 … Wn | One column per calendar week; FTE allocation for the role | `1.0` / `0.5` | number 0.00 |
 | X1 | FTE-Weeks | Sum of FTE allocations across all weeks for the role | `=SUM(C3:L3)` (illustrative ten-week row) | formula 0.00 |
@@ -501,29 +515,30 @@ Key formulas: `Score = P × I`; `Expected MD = Prob % × Effort Impact MD`; `Del
 
 ### 4.10 Style Polish (applies to all sheets)
 
-The script MUST apply the formatting rules below so stakeholders can read the workbook without further editing. Tables are static reports. Follow the Filters and Freeze panes rules below.
+Apply the formatting below, then inspect the actual rendered workbook. Width-based row-height estimates are not a guarantee of readable layout. Tables are static reports. Follow the Filters and Freeze panes rules below.
 
 | Aspect | Rule |
 | --- | --- |
-| Header row | Fill `#1F4E78` (corporate navy), white bold Calibri 10, centered, border bottom 1px |
-| Sub-table header (when stacked) | Fill `#2E75B6` (lighter navy), white bold Calibri 10, centered |
-| Header height | 18pt |
-| Data rows | Calibri 10, default row height 15pt (compact); text-cells top-aligned with wrap; numeric-cells middle-right-aligned |
+| Header row | Fill `#1F4E78`, white bold configured font at 10pt, centered, wrapped, border bottom 1px. Rotate a header 90° when its longest word cannot fit the fixed width; keep the exact header text. |
+| Sub-table header (when stacked) | Fill `#2E75B6`, white bold configured font at 10pt, centered, with the same wrap/rotation rule |
+| Font | `defaults.font_name`, default `Noto Sans Thai`. Confirm the font is installed in the rendering environment and supports all source glyphs. |
+| Header height | Minimum 18pt. Estimate wrapped height after final column widths, capped at 409pt. |
+| Data rows | Configured font at 10pt, minimum 15pt. Estimate wrapped height after final column widths, capped at 409pt. Text top-aligned with wrap; numeric cells middle-right-aligned. |
 | Row fill | **All-white** background on every data row (no alternating banding). Visual separation comes from black cell borders, not fill color. |
 | Cell borders | Thin black border on all 4 sides of every header and data cell within tables (header + body). Non-table areas have no borders. |
-| Text alignment | Text → left + wrap; Numbers (MD/FTE/%/integer) → right; Status (Pass/Warning/Fail/Y/N) → center; ID columns (col 1, IDs like `FN-XX`) → center |
+| Text alignment | Text → left + wrap; Numbers (MD/FTE/%/integer) → right with wrapping for text results; Status (Pass/Warning/Fail/Y/N) → center; sequence and ID headers → center. A text field in the first column remains left-wrapped. |
 | MD / FTE / % cells | Right-aligned with number formats from the [export runtime contract](../../orbit-export-workbook/references/contract.md#cli-and-conversion-behavior) and its explicit project config |
 | Status cells (Pass/Warning/Fail) | Conditional formatting: Pass=green `#C6EFCE`, Warning=amber `#FFEB9C`, Fail=red `#FFC7CE` |
 | Resource matrix heatmap | `tbl_resource_matrix` weekly FTE cells (W1..Wn × role rows, excluding Total row + summary cols) get a 3-color ColorScale: 0=white, 2.0=`#FFEB9C` (warm yellow), 4.0=`#F8696B` (red). Light load = cool, heavy load = hot. |
 | High-impact cells (Raw MD, Adjusted, Delivery Baseline, Planning Total, P90) | Bold; no font-size bump; border-top thin |
-| Bullet cells (Implementation Notes, Interface Count) | Multi-line with `\n`, wrap_text=True, fixed row height (Excel default ~15pt; not auto-fit to content) |
+| Bullet cells (Implementation Notes, Interface Count) | Real newlines with wrap_text=True. Height estimate uses final widths and line breaks, capped at 409pt. Check clipping, Thai line breaks and font substitution in the rendered workbook. |
 | Column widths | Fixed per-keyword widths — see the column width recipes below. |
 | Filters | **NO auto-filter** on any Excel Table |
 | Freeze panes | **NO freeze panes** on any sheet |
 | Title block | **DROP per-table title block** — sheet name in tab; table identity from header context only (compact layout) |
 | Sheet tab color | README=`#1F4E78`; Sizing/Risk=`#C00000` (highlight); Timeline=`#2E75B6`; others=default |
 | No gridlines outside tables | Hide gridlines on non-table areas |
-| Print setup | Landscape, fit to 1 page wide; current converter repeats rows 1:2; verify they are meaningful for each sheet |
+| Print setup | Landscape, fit to 1 page wide. Repeat headers only on single-table sheets, using both rows for a resource matrix. Stacked tables must not repeat another table's header. Rotate narrow phase labels instead of widening the fixed week columns. Inspect actual print pages. |
 
 #### Column width recipes (per header keyword, in characters)
 
@@ -614,21 +629,25 @@ Section 4 owns all sheet schemas and layout; §5 owns Markdown syntax; §7 owns 
 
 ## 7. Validation Rules
 
-The Markdown author writes formulas for mechanical checks and sourced verdicts for semantic checks. The converter only writes/styles those cells; it does not independently compute, recalculate, or verify them. Record the calculation engine, independent reconciliation, and unresolved warnings in README. Summarize results in `README` (no standalone validation sheet unless requested).
+The Markdown author writes formulas for mechanical checks and sourced verdicts for semantic checks. The converter only writes/styles those cells. The separate [verifier](../../orbit-export-workbook/references/contract.md#independent-workbook-verifier) compares parsed input rows with actual formulas and cached values from the delivered XLSX. It is not a formula engine or a semantic source reviewer. Run it after final recalculation, or report missing caches as warnings when recalculation is unavailable.
+
+Keep independent semantic review against approved Step 01-06 detail rows. Check operation-specific actors, source identity, assumptions, exclusions, integration meaning, atomicity, acceptance and readiness. A populated cell or author-written `Pass` is not independent evidence. Report implemented numeric coverage and uncovered checks separately. Apply the warning disclosure and roll-up rule in §4.0.2.
 
 | ID | Rule |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| VAL-01 | Raw MD role totals in `Estimate Sizing` summary equal summed numeric detail rows. |
+| VAL-01 | For every role, including approved extra roles, compare each SG1 Features, SG2 Features, Integration and Non-Dev summary cell against its matching detail rows. Derive feature SG by exact subfeature-ID lookup. Reconcile each role's Raw Grand Total too. A matching grand total cannot hide a swapped role or bucket. |
 | VAL-02 | Bucket totals SG1 + SG2 + Integration + Non-Dev = Raw Grand Total. |
 | VAL-03 | QA vs FE + BE cross-check per applicable detail row and summary total; QA is sized from test cases in Step 04, and deviation without rationale returns Warning. |
 | VAL-04 | Step 05 Adjusted MD = Raw MD + applicable rework + applicable buffer + Step 05-derived PM. |
-| VAL-05 | Resource matrix effective MD reconciles to Adjusted MD within 95-105%, else warning. |
+| VAL-05 | Compare effective capacity and delivery demand for every role and total over the same Delivery Weeks horizon, within 95-105%, else Warning. Reconcile separately scheduled warranty to full Adjusted MD. Check demand-derived Average FTE independently of allocation averages. |
 | VAL-06 | Delivery Baseline = Adjusted MD + Contingency MD. |
 | VAL-07 | Planning Total = Delivery Baseline + Management Reserve. |
-| VAL-08 | P25/P50/P75/P90 formulas match Step 06 reference, else exception rationale present. |
+| VAL-08 | Check every risk row's Score = P × I, Prob % mapping of P = 1/2/3/4/5 to 10/30/50/70/90%, and Expected MD = Prob % × Effort Impact MD. Check each P25/P50/P75/P90 equation against the Step 06 Scenario Formula Reference, then ordering separately. Reconcile Recommended Contingency to expected-risk subtotal plus named adjustments, selected uplift to selected range minus P50, and reserve to its sourced rate and denominator. An ordered range alone is not a formula pass. Preserve approved exception rationale and the unresolved discrepancy status. |
 | VAL-09 | Every baseline INT ID resolves in Architecture, has UI/API coverage and sizing, and maps to Risk only if an applicable uncertainty exists; explicit N/A reasons are allowed. A mention on any one sheet is not full coverage. |
 | VAL-10 | Every baseline subfeature traces through Feature Inventory, Backlog Inventory, WBS mapping and Estimate Sizing; UI/API mapping has source refs or explicit N/A reason. Preserve non-UI capabilities. |
 | VAL-11 | Baseline and scenario deltas remain separate; scenarios do not feed Delivery Baseline formulas unless re-baseline is recorded. |
 | VAL-12 | Forbidden commercial terms do not appear as workbook output (fields, calculations, values, pricing tables, commercial deliverables). They may appear only in no-pricing guardrails, validation labels, or remediation notes. |
 | VAL-13 | Every baseline `BI-XX`, `SCR-XX`, `API-XX`, `INT-XX`, and atomic subfeature has WBS reference coverage or explicit `N/A — [reason]`. |
 | VAL-14 | Formula-first mechanical checks use valid resolved A1 addresses and produce no circular/undefined references. Recalculated values match independent numeric checks, or README records Not recalculated with warnings. |
+
+For VAL-08, let A be Step 05 Adjusted MD and C be non-negative Recommended Contingency MD. Independently compute P25 = A + min(C, max(0.5 × C, 0.05 × A)), P50 = A + C, P75 = P50 + max(0.5 × C, 0.05 × A), and P90 = P75 + max(0.5 × C, 0.10 × A). Then check P25 ≤ P50 ≤ P75 ≤ P90. Compare each actual cell with its own expected result, not only the adjacent range values. Use the approved Step 06 exception if one exists and disclose the deviation. These are planning heuristics, not statistically validated percentiles.

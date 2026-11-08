@@ -103,11 +103,29 @@ scripts and reference data resolve from the installed skill directory.
 | TOR analysis with non-text input | Docling conversion under the action's source-quality contract |
 | Workbook export | Python 3.10+ and the bundled [requirements.txt](skills/orbit-export-workbook/scripts/requirements.txt), installed in a suitable environment |
 | Workbook recalculation | Excel or LibreOffice; otherwise report `Not recalculated` |
+| Workbook layout | Noto Sans Thai, or an installed Thai-capable font selected with `defaults.font_name`; inspect the rendered workbook before delivery |
 | Diagram generation | A project-local SVG renderer and an SVG viewer; `rsvg-convert` for PNG export |
 
 The workbook converter is bundled with the export skill. Always pass an
 explicit project config with source-derived phase bands. The diagram skill
 guides creation of a project-local renderer from approved nodes and edges.
+
+After recalculation, verify the actual XLSX against its Markdown and config:
+
+```sh
+python skills/orbit-export-workbook/scripts/verify_workbook.py \
+  --input output/estimation_workbook.md \
+  --workbook output/estimation_workbook.xlsx \
+  --config output/workbook_config.yaml \
+  --output output/workbook_verification.json
+```
+
+Exit codes are `0` for `Pass`, `1` for `Warning`, `2` for `Fail`, and `3` for
+input or runtime errors. The verifier independently checks supported arithmetic,
+identifiers, formula transfer and warning disclosure. It does not calculate
+formulas or establish whether source scope, actors or approvals are correct.
+Missing formula caches remain unresolved. Review those limits alongside the
+generated findings.
 
 ### Maintain the suite
 
@@ -215,13 +233,17 @@ require an extension; Claude's `agents/` directory is not installed into pi.
 ## Verify
 
 ```sh
-python3 -B -m unittest discover -s tests -v
-python3 scripts/setup.py check --source-only
+python3 -m venv .venv
+.venv/bin/python -m pip install -r skills/orbit-export-workbook/scripts/requirements.txt
+.venv/bin/python -B -m unittest discover -s tests -v
+.venv/bin/python scripts/setup.py check --source-only
 ```
 
 The tests use disposable checkouts and home directories. They cover dry-run,
 repeat installation, conflicts across agents, modified managed files, stale
 links, settings preservation, package ownership and symlinked config paths.
+Workbook tests cover identifier preservation, independent arithmetic, cached
+formula values and disclosure of unresolved findings.
 
 To exercise the installer without changing your actual configuration:
 

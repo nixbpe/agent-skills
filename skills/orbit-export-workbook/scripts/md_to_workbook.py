@@ -25,6 +25,7 @@ import os
 import re
 import sys
 import tempfile
+from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -231,6 +232,8 @@ def _coerce_value(text: str, header: str, integer_headers: list[str]) -> Any:
     s = text.strip()
     if s == "" or s == "-" or s.lower() in {"n/a", "na"}:
         return s
+    if header.endswith(" ID"):
+        return s
     # Escaped leading '=' for literal text starting with '='
     if s.startswith("'="):
         return s[1:]
@@ -246,7 +249,7 @@ def _coerce_value(text: str, header: str, integer_headers: list[str]) -> Any:
     if _NUMBER_RE.fullmatch(s):
         try:
             v = float(s.replace(",", ""))
-            if header in integer_headers or v.is_integer() and header in integer_headers:
+            if header in integer_headers:
                 return int(v)
             return v
         except ValueError:
@@ -255,6 +258,8 @@ def _coerce_value(text: str, header: str, integer_headers: list[str]) -> Any:
 
 
 def _number_format_for(header: str, defaults: dict[str, Any]) -> str | None:
+    if header.endswith(" ID"):
+        return "@"
     nf_map: dict[str, str] = defaults.get("number_format", {}) or {}
     integer_headers: list[str] = defaults.get("integer_headers", []) or []
     if header in integer_headers:
@@ -269,11 +274,9 @@ def _number_format_for(header: str, defaults: dict[str, Any]) -> str | None:
 # ---------------------------------------------------------------------------
 # Styling
 # ---------------------------------------------------------------------------
-THIN = Side(style="thin", color="BFBFBF")
-THICK_BOTTOM = Side(style="medium", color="1F4E78")
 ALIGN_CENTER = Alignment(horizontal="center", vertical="center", wrap_text=True)
 ALIGN_TOP_WRAP = Alignment(horizontal="left", vertical="top", wrap_text=True)
-ALIGN_RIGHT_MIDDLE = Alignment(horizontal="right", vertical="center", wrap_text=False)
+ALIGN_RIGHT_MIDDLE = Alignment(horizontal="right", vertical="center", wrap_text=True)
 ALIGN_CENTER_MIDDLE = Alignment(horizontal="center", vertical="center", wrap_text=False)
 
 
@@ -392,11 +395,11 @@ def _column_width_for_header(header: str) -> int:
     return 12
 
 
-def _cell_alignment(header: str, value: Any, *, col_idx: int) -> Alignment:
+def _cell_alignment(header: str, value: Any) -> Alignment:
     """Pick the right Alignment object based on header pattern and value (R3).
 
     - Header containing 'Check'/'Status'/'Result'/'Band' → center + middle
-    - col_idx == 1 (the leading '#'/'Seq' column) → center + middle
+    - Sequence headers '#'/'Seq'/'No' → center + middle
     - ID columns → center + middle
     - Numeric headers (MD/FTE/%/Score/Sprint-FTE/FTE-Weeks/integer) → right + middle
     - Default text → left + top + wrap=True
@@ -404,8 +407,7 @@ def _cell_alignment(header: str, value: Any, *, col_idx: int) -> Alignment:
     h = (header or "").strip()
     lower = h.lower()
 
-    # First column (#/Seq/No) → center + middle
-    if col_idx == 1 or h in ("#", "Seq", "No"):
+    if h in ("#", "Seq", "No"):
         return ALIGN_CENTER_MIDDLE
 
     # Status-style columns
@@ -499,8 +501,9 @@ def _apply_table_styling(
     fail_font = defaults.get("fail_font", "9C0006")
 
     header_pf = PatternFill("solid", fgColor=header_fill_hex)
-    header_font = Font(name="Calibri", size=11, bold=True, color=header_font_color)
-    body_font = Font(name="Calibri", size=10)
+    font_name = defaults.get("font_name", "Noto Sans Thai")
+    header_font = Font(name=font_name, size=10, bold=True, color=header_font_color)
+    body_font = Font(name=font_name, size=10)
 
     # All-white-with-black-borders style (replaces alternating row banding).
     # Use thin black borders on every cell side so the table reads as a static grid.
@@ -512,7 +515,7 @@ def _apply_table_styling(
         cell = ws.cell(row=start_row, column=c)
         cell.fill = header_pf
         cell.font = header_font
-        cell.alignment = ALIGN_CENTER_MIDDLE
+        cell.alignment = ALIGN_CENTER
         cell.border = CELL_BORDER
     # R1: header row height 18pt (was 26pt)
     ws.row_dimensions[start_row].height = 18
@@ -533,7 +536,7 @@ def _apply_table_styling(
         for r in range(start_row + 1, end_row + 1):
             cell = ws.cell(row=r, column=col_idx)
             cell.font = body_font
-            cell.alignment = _cell_alignment(hdr, cell.value, col_idx=col_idx)
+            cell.alignment = _cell_alignment(hdr, cell.value)
             if nf:
                 cell.number_format = nf
             cell.border = CELL_BORDER
@@ -562,6 +565,9 @@ def _apply_table_styling(
             seen.add(col_letter)
         elif target_w > (col_dim.width or 0):
             col_dim.width = target_w
+        if max(map(len, hdr.split()), default=0) > (col_dim.width or target_w) * 0.8:
+            ws.cell(start_row, col_idx).alignment = Alignment(
+                horizontal="center", vertical="center", text_rotation=90, wrap_text=False)
 
         # Conditional formatting for status columns
         if is_status and end_row >= start_row + 1:
@@ -615,7 +621,7 @@ def _maybe_bold_high_impact(
     header: list[str],
     defaults: dict[str, Any],
 ) -> None:
-    """Bold + border-top rows whose 'Field' column matches high-impact names."""
+    """Emphasize configured totals without replacing their font or table borders."""
     high_impact = set(defaults.get("high_impact_field_names", []) or [])
     if not high_impact or "Field" not in header:
         return
@@ -625,8 +631,9 @@ def _maybe_bold_high_impact(
         if isinstance(v, str) and v.strip() in high_impact:
             for c in range(1, len(header) + 1):
                 cell = ws.cell(row=r, column=c)
-                cell.font = Font(name="Calibri", size=11, bold=True)
-                cell.border = Border(top=THIN)
+                font = copy(cell.font)
+                font.bold = True
+                cell.font = font
 
 
 def _set_tab_color(ws: Worksheet, sheet_name: str, defaults: dict[str, Any]) -> None:
@@ -762,7 +769,7 @@ def _task_class_colors_from_defaults(defaults: dict[str, Any] | None):
     return tuple(merged) + _TASK_CLASS_COLORS
 
 
-def _write_phase_band_header(ws: Worksheet, header: list[str], row: int, bands=None) -> None:
+def _write_phase_band_header(ws: Worksheet, header: list[str], row: int, bands=None, font_name="Noto Sans Thai") -> None:
     """Emit a merged Phase Band header row above the sprint column headers.
 
     Walks the table header looking for sprint tokens (S0..Sn) and merges each
@@ -781,9 +788,11 @@ def _write_phase_band_header(ws: Worksheet, header: list[str], row: int, bands=N
             continue
         start_c, end_c = min(cols), max(cols)
         cell = ws.cell(row=row, column=start_c, value=label)
-        cell.font = Font(name="Calibri", size=10, bold=True, color="1F4E78")
+        cell.font = Font(name=font_name, size=10, bold=True, color="1F4E78")
         cell.fill = PatternFill("solid", fgColor=fill_hex)
-        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        rotate = max(map(len, label.split()), default=0) + 2 > 4 * len(cols)
+        cell.alignment = Alignment(horizontal="center", vertical="center",
+                                   wrap_text=not rotate, text_rotation=90 if rotate else 0)
         if end_c > start_c:
             ws.merge_cells(start_row=row, start_column=start_c, end_row=row, end_column=end_c)
             # Ensure merged tail cells inherit fill (openpyxl quirk)
@@ -886,7 +895,9 @@ def _write_table(
 
     # Sheet 8 §4.8.1 — Phase Band merged header row above sprint columns
     if table_name == "tbl_resource_matrix":
-        _write_phase_band_header(ws, header=table.header, row=start_row, bands=_phase_bands_from_defaults(defaults))
+        _write_phase_band_header(ws, header=table.header, row=start_row,
+                                 bands=_phase_bands_from_defaults(defaults),
+                                 font_name=defaults.get("font_name", "Noto Sans Thai"))
         start_row += 1
     task_colors = _task_class_colors_from_defaults(defaults)
 
@@ -895,9 +906,6 @@ def _write_table(
         ws.cell(row=start_row, column=c, value=hdr)
 
     # Body
-    # R1: keep default Excel row height (~15pt) — do not auto-expand even for
-    # bullet rows; rely on wrap_text + column widths instead.
-    row_height_bullet = None
     # Sheet 8 §4.8.2 — collect active-cell fills for the task timeline Gantt.
     # We defer applying fills until AFTER _apply_table_styling (which sets
     # banding/alt_fill) so the task-class color wins.
@@ -905,7 +913,6 @@ def _write_table(
     task_fill_jobs: list[tuple[int, int, str]] = []
     for r_offset, row in enumerate(table.rows, start=1):
         excel_row = start_row + r_offset
-        has_bullets = False
         # Resolve task-class color for this row (lookup against task / phase column)
         row_fill_hex = (
             _task_class_color(_row_task_label(row, table.header), task_colors) if is_task_timeline else None
@@ -913,9 +920,10 @@ def _write_table(
         for c, val in enumerate(row, start=1):
             hdr = table.header[c - 1] if c - 1 < len(table.header) else ""
             normalized = _normalize_bullets(val) if isinstance(val, str) else val
-            if isinstance(normalized, str) and "\n" in normalized:
-                has_bullets = True
-            cell_value = _coerce_value(normalized, hdr, integer_headers) if isinstance(normalized, str) else normalized
+            if is_task_timeline and hdr == "#":
+                cell_value = str(normalized).strip()
+            else:
+                cell_value = _coerce_value(normalized, hdr, integer_headers) if isinstance(normalized, str) else normalized
             # Sheet 8 §4.8.2: literal "active" → fill-only Gantt cell
             if (
                 is_task_timeline
@@ -927,8 +935,6 @@ def _write_table(
                     task_fill_jobs.append((excel_row, c, row_fill_hex))
             else:
                 ws.cell(row=excel_row, column=c, value=cell_value)
-        if has_bullets and row_height_bullet is not None:
-            ws.row_dimensions[excel_row].height = row_height_bullet
 
     end_row = start_row + len(table.rows)
     end_col = len(table.header)
@@ -944,6 +950,10 @@ def _write_table(
         defaults=defaults,
         is_sub_table=is_sub_table,
     )
+    if is_task_timeline and "#" in table.header:
+        id_column = table.header.index("#") + 1
+        for row_index in range(start_row + 1, end_row + 1):
+            ws.cell(row=row_index, column=id_column).number_format = "@"
 
     # NOTE: Excel Table objects intentionally omitted.
     #
@@ -1031,13 +1041,46 @@ def write_workbook(
             )
 
         # R1: do not freeze panes — leave ws.freeze_panes at its default (None).
+        # Final widths include every stacked table. Resizing keeps A1 references intact.
+        for row in ws.iter_rows():
+            height = 18.0
+            for cell in row:
+                if not isinstance(cell.value, str):
+                    continue
+                text = cell.value
+                if cell.data_type == "f":
+                    literals = re.findall(r'"((?:[^"]|"")*)"', text)
+                    if not literals:
+                        continue
+                    text = max(literals, key=len).replace('""', '"')
+                width = ws.column_dimensions[cell.column_letter].width or 12
+                for merged in ws.merged_cells.ranges:
+                    if cell.coordinate == merged.start_cell.coordinate:
+                        width = sum(
+                            ws.column_dimensions[get_column_letter(col)].width or 12
+                            for col in range(merged.min_col, merged.max_col + 1)
+                        )
+                        break
+                if cell.alignment.text_rotation == 90:
+                    height = max(height, len(text) * float(cell.font.sz or 10) * 0.7 + 8)
+                if cell.alignment.wrap_text:
+                    chars_per_line = max(1, int(width * 0.8))
+                    lines = sum(
+                        max(1, (len(line) + chars_per_line - 1) // chars_per_line)
+                        for line in text.split("\n")
+                    )
+                    height = max(height, lines * float(cell.font.sz or 10) * 1.5 + 6)
+            ws.row_dimensions[row[0].row].height = min(409, height)
+
 
         # Print setup polish
         ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
         ws.page_setup.fitToWidth = 1
         ws.page_setup.fitToHeight = 0
         ws.print_options.horizontalCentered = True
-        ws.print_title_rows = "1:2"
+        ws.sheet_properties.pageSetUpPr.fitToPage = True
+        if len(section.tables) == 1:
+            ws.print_title_rows = "1:2" if section.tables[0].table_name == "tbl_resource_matrix" else "1:1"
 
     # Atomic write
     tmp_dir = output_path.parent

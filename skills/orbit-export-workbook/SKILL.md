@@ -21,7 +21,7 @@ description: "แปลง estimation_workbook.md ที่ตรวจทาน
 
 ## กฎที่ต้องอ่าน
 
-อ่าน [export runtime contract](references/contract.md), [canonical workbook schema](../orbit-prepare-workbook/references/contract.md) และ principles ต่อไปนี้ แม้เรียก action โดยตรง
+ก่อนสร้างผลงาน ถามคำถาม หรือหยุดเพราะ prerequisite ขาด ให้ใช้ [dependency loading protocol](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies). อ่าน [export runtime contract](references/contract.md), [canonical workbook contract ทั้งฉบับ](../orbit-prepare-workbook/references/contract.md) และ principles ทุกไฟล์ด้านล่างทีละไฟล์ด้วยช่วงบรรทัดจำกัดจนจบ รวมส่วนที่ถูกตัด. เก็บ read evidence และ reuse เฉพาะ content ที่ไม่เปลี่ยน แม้เรียก action โดยตรง
 
 - [Evidence and traceability](../principle-orbit-evidence-and-traceability/SKILL.md)
 - [Explicit approval](../principle-orbit-explicit-approval/SKILL.md)
@@ -36,15 +36,16 @@ description: "แปลง estimation_workbook.md ที่ตรวจทาน
 
 1. ตรวจ source approval และ authorization ของ Markdown revision นี้ ถ้าขาด Markdown หรือยังมี mandatory gate ที่ไม่ผ่าน ให้หยุดและระบุ prerequisite ไม่สร้าง estimate ทดแทน ถ้ามี decision ที่ต้องเลือก ใช้ ask tool หรือ numbered chat options เมื่อ tool ไม่พร้อม
 2. ตรวจ 10 sheets, table headers, row widths, source rows, A1 formulas และ VAL-01 ถึง VAL-14 ตาม canonical contract อย่าอาศัย `--strict` แทน schema review เพราะมันตรวจเพียง H2 ที่ไม่มี tables
-3. สร้าง `output/workbook_config.yaml` จาก bundled config ใส่ phase bands ที่ตรง approved Step 05 และ Markdown metadata ตรวจช่วงสัปดาห์และสีจริง ห้ามใช้ built-in 48-week example หรือแก้ shared config
+3. สร้าง `output/workbook_config.yaml` จาก bundled config ใส่ phase bands ที่ตรง approved Step 05 และ Markdown metadata ตรวจช่วงสัปดาห์และสีจริง ห้ามใช้ built-in 48-week example หรือแก้ shared config. ตรวจว่า `defaults.font_name` ซึ่งเริ่มต้นเป็น `Noto Sans Thai` ติดตั้งในเครื่องที่ render และแสดง glyph ไทย/อังกฤษที่ใช้ได้ครบ
 4. Resolve path ของ installed converter แล้วเรียกจาก working project ด้วย `--input`, `--output`, `--config` และ `--strict` ตาม [runtime CLI](references/contract.md#bundled-runtime-and-paths) ต้องส่ง `--config` เสมอเพื่อไม่อ่าน config จาก directory ผิด
 5. ถ้า conversion ล้มเหลว ให้แสดง exit code และ error จริง เก็บ Markdown ไว้ ระบุว่า `.xlsx` เดิมเป็น stale หากมี ห้ามอ้างว่า export สำเร็จจากไฟล์เก่า
-6. เปิด workbook จริง ตรวจ sheet order, formula coordinates, cell types, phase bands, timeline fills และ readability สูตรไม่ถูกคำนวณโดย converter ให้ใช้ Excel หรือ LibreOffice ถ้ามี แล้วตรวจผลกับ independent reconciliation
-7. หาก recalculation ไม่พร้อม ให้บันทึก `Not recalculated` ใน Markdown และ README พร้อม warnings ห้ามประกาศ formula checks ว่าผ่านเพราะสร้างไฟล์ได้ ทุก content/status ที่ส่งออกต้องมีใน Markdown และต้อง rerun conversion เมื่อ Markdown เปลี่ยน
+6. เปิด workbook จริงและตรวจภาพใน Excel/LibreOffice หรือ rendered pages หลังปรับ layout ครั้งสุดท้าย ตรวจ sheet order, cell types รวม IDs, phase bands, timeline fills, wrapped headers, clipping และ print headers. Row-height estimate ไม่รับประกันว่า text หรือ Thai glyphs จะแสดงครบ. คง independent semantic source review รวม actor ของแต่ละ operation และ assumption status
+7. Recalculate ด้วย Excel/LibreOffice เมื่อมี แล้วรัน [verifier CLI](references/contract.md#independent-workbook-verifier) กับ `.xlsx` ที่จะส่งจริงหลัง recalculation ครั้งสุดท้าย. ตรวจ expected/actual/cell evidence และ coverage limitations ของ report. ส่งต่อ Warning/Fail ไปยัง Markdown, validation rows, README และ final handoff ตาม canonical §7
+8. หาก recalculation ไม่พร้อม ให้บันทึก `Not recalculated` พร้อม warnings แล้วรัน verifier กับไฟล์จริงด้วย ห้ามประกาศ formula checks ว่าผ่านเพราะสร้างไฟล์ได้. เมื่อ Markdown/status/config เปลี่ยน ให้ convert ใหม่ แล้ว recalculate, inspect และ verify ไฟล์สุดท้ายอีกครั้ง. ห้ามใช้ report ของไฟล์ก่อนหน้า
 
 ## ผลลัพธ์และจุดหยุด
 
-ส่ง `output/estimation_workbook.xlsx`, path ของ explicit project config และ conversion provenance พร้อม calculation status, checks ที่ทำจริง และ warnings จากนั้นหยุดให้ผู้ใช้ review ไม่เรียก action ถัดไปเอง
+ส่ง `output/estimation_workbook.xlsx`, `output/workbook_verification.json`, path ของ explicit project config และ conversion/verifier provenance พร้อม calculation status, checks ที่ทำจริง, coverage limitations และ warnings ที่มี row/cell evidence จากนั้นหยุดให้ผู้ใช้ review ไม่เรียก action ถัดไปเอง
 
 การ export ไม่แก้ baseline, ไม่เพิ่ม commercial fields และไม่ปลด mandatory quality gates ถ้า source ต้องแก้ ให้ระบุ finding เพื่อกลับไป [prepare workbook](../orbit-prepare-workbook/SKILL.md) ไม่แก้เงียบระหว่าง conversion
 

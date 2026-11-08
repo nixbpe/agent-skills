@@ -32,6 +32,8 @@ Focus ลด available capacity ไม่ลด effort. Rework และ buffer 
 
 Role totals และ sizing bucket totals ต้องเท่ากันตรงตาม Step 04. Step 05 capacity ใช้ tolerance 95–105% ต่อ role และ total. ใช้ demand และ capacity ใน horizon เดียวกัน. Warranty มี schedule แยกหลัง hypercare.
 
+Average FTE เป็น demand เฉลี่ย ใช้ `Adjusted MD ÷ (Weeks × working days/week × focus)` โดย numerator และ denominator อยู่ใน horizon เดียวกัน. แยก delivery กับ warranty. `Allocated average FTE = FTE-Weeks ÷ Weeks` เป็นค่าเฉลี่ย allocation ไม่ใช้แทน Average FTE แม้ coverage อยู่ใน 95–105%. ระบุ horizon และแสดงทั้งสองชื่อให้ชัดเมื่อรายงานคู่กัน.
+
 ## การใช้ benchmark
 
 เปรียบเทียบ scope, roles และ buckets เดียวกัน. ห้ามเทียบ FE+BE benchmark กับ Raw Grand Total ที่รวม QA/support/non-dev แล้วอ้างว่า reconcile. Benchmark เท่ากับศูนย์ให้ N/A พร้อมเหตุผล.

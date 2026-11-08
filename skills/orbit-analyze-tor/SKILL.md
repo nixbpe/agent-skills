@@ -5,6 +5,8 @@ description: "วิเคราะห์ TOR/RFP หรือ customer brief �
 
 # วิเคราะห์ TOR และยืนยันข้อมูลตั้งต้น
 
+ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+
 ## ใช้เมื่อ
 
 ใช้เมื่อได้รับ TOR/RFP, requirement notes หรือ customer brief และต้องแยกข้อเท็จจริงออกจากข้อสงสัยก่อนกำหนด scope รวมถึงการแก้ Step 00 หลังได้รับคำตอบใหม่

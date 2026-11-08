@@ -5,6 +5,8 @@ description: "ประเมิน external risks และจัดทำ fina
 
 # ประเมินความเสี่ยงและสรุป planning baseline
 
+ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+
 ## ใช้เมื่อ
 
 ใช้หลังอนุมัติ Step 05 เพื่อประเมินความไม่แน่นอนภายนอกทีมและเสนอ final planning baseline งานนี้รวม final consistency review ไว้ใน Step 06 แล้ว ไม่มี baseline-review action แยก

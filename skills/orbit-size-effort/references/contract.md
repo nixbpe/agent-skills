@@ -203,6 +203,8 @@ Create/update `output/step_04_sizing_review.md` using the schema below. Every de
 
 Subtotals the test-case basis behind QA MD in Estimation file §1–§4 and proves they reconcile to Estimation file §5 Sizing Summary QA total. Per-subfeature test cases stay in the Estimation file `[Cx]` bullets; do not list them again here.
 
+`Rows` counts every baseline sizing row in Estimation §1–§4, including rows with zero QA. Show zero-QA rows explicitly, or in a named group listing their source IDs with zero cases and QA MD; use `N/A` for their MD/case average. The Total `Rows` must equal the sum of the visible group counts and the number of distinct source rows. Case-count reconciliation supports the estimate; it does not prove executable test coverage or absence of duplicate test scenarios.
+
 | Row Type | Group | Rows | Test Cases (S / M / C) | Total Cases | MD/case Avg | QA MD |
 |---|---|---:|---|---:|---:|---:|
 | Feature | [module] | [N subfeatures] | S=[N], M=[N], C=[N] | [N] | [0.1-0.4] | [MD] |

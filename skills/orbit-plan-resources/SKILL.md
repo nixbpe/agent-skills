@@ -5,6 +5,8 @@ description: "วาง resource plan จาก approved Raw MD ของ Step 0
 
 # วางแผนทีมและกำลังการส่งมอบ
 
+ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+
 ## ใช้เมื่อ
 
 ใช้เมื่อมี approved sizing แล้วและต้องแปลง effort เป็นทีม ระยะเวลา และ weekly resource matrix ของ Step 05 งานนี้ไม่ทำ risk range ของ Step 06 และไม่คำนวณต้นทุนหรือราคา

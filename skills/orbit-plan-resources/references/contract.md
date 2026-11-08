@@ -68,7 +68,7 @@ Capacity constants and formulas (define once, reuse everywhere):
 - `Rework MD = Raw MD × applicable rework rate`; `Buffer MD = Raw MD × applicable buffer rate`. Both use Raw MD, not compounded values. Focus affects capacity only, not Adjusted MD.
 - `PM Base MD = base governance PM FTE-Weeks × WORK_DAYS_PER_WEEK × Focus Factor`, plus separately approved PM buffer. Record the base allocation before buffer; final matrix PM allocation must cover base plus buffer without feeding back into PM Base MD. PM Base MD is governance effort, not rework. Include PM Base MD as a separate addition in total reconciliation.
 - Use dated calendar working days when known. Otherwise, calendar months = weeks × WORK_DAYS_PER_WEEK ÷ WORK_DAYS_PER_MONTH; do not mix this with four-week month approximations.
-- Average FTE = `Adjusted MD ÷ (Weeks × EFFECTIVE_MD_PER_FTE_WEEK)` for the same delivery/support horizon. Its rounded-up value is only a staffing lower bound. Headcount must also cover peak role allocation, skills, leave, and dependency timing. Round people up; fractional FTE cells represent partial allocation, not fractional people.
+- Average FTE = `Adjusted MD ÷ (Weeks × EFFECTIVE_MD_PER_FTE_WEEK)` using demand and weeks from the same delivery/support horizon. Do not substitute matrix allocation. `Allocated average FTE = FTE-Weeks ÷ Weeks` is a separate capacity measure; label it explicitly even when coverage passes. Average FTE rounded up is only a staffing lower bound. Headcount must also cover peak role allocation, skills, leave, and dependency timing. Round people up; fractional FTE cells represent partial allocation, not fractional people.
 
 ## Rework Applicability Reference
 
@@ -134,7 +134,7 @@ Use `Rework Applicability Reference` to select each role's rework rate. `[r%]` r
 
 - Effort: Raw [N] MD (Step 04, unchanged) → Adjusted [N] MD; Adjusted MD by role: [role list]; PM [N] MD = [x%].
 - Duration through hypercare: [N] weeks / [N] months; BUILD [N] weeks; warranty horizon: [N or N/A]. Delivery Person-Months [N] (`delivery Adjusted MD ÷ (WORK_DAYS_PER_MONTH × Focus Factor)`); warranty demand/capacity is reported separately.
-- Weekly resource baseline: [week count, phase bands, peak/avg FTE/week from the matrix `Total FTE/week` row, coverage ratio].
+- Weekly resource baseline: [week count and phase bands]; Average FTE [N] (`delivery Adjusted MD ÷ (delivery weeks × EFFECTIVE_MD_PER_FTE_WEEK)`); allocated average FTE [N] (`delivery FTE-Weeks ÷ delivery weeks`); peak allocated FTE [N] from the matrix `Total FTE/week` row; coverage [x%]. State the delivery horizon; report warranty separately.
 - Prioritized backlog and critical path: [top critical-path features, critical-path MD, MP groupings].
 - Mini-phasing: [MP count, week ranges, feature groups, gates] or `N/A — BUILD ≤ 4 wk`.
 - Resource constraints: [constraints from matrix notes/N/A].
@@ -245,7 +245,7 @@ Notes:
 - `Nominal MD` = `FTE-Weeks × WORK_DAYS_PER_WEEK` (default WORK_DAYS_PER_WEEK=5).
 - `Effective MD` = `Nominal MD × Focus Factor`; reconcile it to the delivery portion of Adjusted MD within 95-105%, then check combined delivery + warranty capacity against full Adjusted MD.
 - Retain unused roles with `0` FTE-Weeks. For zero Adjusted MD, Coverage Ratio is `N/A — no demand`; non-zero allocation needs a reason. Show both per-role and total coverage.
-- Delivery weeks through hypercare and warranty weeks are distinct horizons. Peak/average FTE must name their horizon; do not dilute delivery averages with a long standby warranty period.
+- Delivery weeks through hypercare and warranty weeks are distinct horizons. Report demand-based Average FTE, allocated average FTE, and peak allocated FTE with their horizon. Do not dilute delivery averages with standby warranty weeks or replace demand with Effective MD.
 
 ### Warranty Resource Schedule
 
@@ -296,7 +296,7 @@ Render per [reviewer-first guidance](../../principle-orbit-reviewer-first/SKILL.
 | Mini-phasing rule applied | Pass/Warning/Fail | If BUILD > 4 wk, split into `MP1...MPn` (typically 3-4 wk each; shorter final MP justified) with feature group + gate; else `N/A — BUILD ≤ 4 wk`. |
 | Weekly resource matrix reconciles to Adjusted MD | Pass/Warning/Fail | Delivery capacity matches delivery demand; delivery + warranty capacity matches full Adjusted MD by role within 95-105%. `Phase Band` covers every delivery week. |
 | Project timeline aligns to weekly matrix | Pass/Warning/Fail | Week columns and phase bands match the matrix; BUILD decomposed into `MP` rows when split; no separate sprint timeline. |
-| Step 06 handoff ready | Pass/Warning/Fail | [note] |
+| Step 06 handoff ready | Pass/Warning/Fail | Average FTE uses same-horizon Adjusted demand and capacity constants. Allocated average FTE uses FTE-Weeks/weeks and has a separate label. Handoff figures reconcile to their owning tables. |
 
 
 ```

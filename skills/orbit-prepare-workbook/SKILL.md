@@ -19,7 +19,7 @@ description: "เตรียม Markdown workbook จาก planning artifacts 
 
 ## กฎที่ต้องอ่าน
 
-อ่าน [workbook contract ทั้งฉบับ](references/contract.md) และ principles ต่อไปนี้ก่อนทำงาน แม้ผู้ใช้เรียก action นี้โดยตรง
+ก่อนสร้างผลงาน ถามคำถาม หรือหยุดเพราะ prerequisite ขาด ให้ใช้ [dependency loading protocol](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies). อ่าน [workbook contract ทั้งฉบับ](references/contract.md) และ principles ทุกไฟล์ด้านล่างทีละไฟล์ด้วยช่วงบรรทัดจำกัดจนจบ รวมส่วนที่ถูกตัด. เก็บ read evidence และ reuse เฉพาะ content ที่ไม่เปลี่ยน แม้เรียก action โดยตรง
 
 - [Evidence and traceability](../principle-orbit-evidence-and-traceability/SKILL.md)
 - [Explicit approval](../principle-orbit-explicit-approval/SKILL.md)
@@ -36,9 +36,9 @@ description: "เตรียม Markdown workbook จาก planning artifacts 
 2. ถามเฉพาะ decision ที่กระทบ baseline หรือการส่งออกจริง ใช้ ask tool พร้อมตัวเลือกเมื่อทำได้ ถ้าไม่มี tool ให้ใช้ตัวเลือกใน chat ไม่ถามข้อมูลที่อ่านจาก source ได้
 3. สร้าง 10 sheet sections ตามลำดับใน contract คงชื่อ H2, `tbl_*`, headers, IDs และ column order ใส่ real rows ครบทุก sheet แยก baseline, scenarios และ exclusions โดยไม่สร้าง backlog หรือ scope เพิ่ม
 4. วางตำแหน่งแถวจริงก่อนเขียนสูตร ใช้ A1 references ที่ resolve แล้ว คิด spacer ระหว่าง tables และ phase-band row ของ resource matrix ด้วย ใช้ `active` สำหรับ task timeline และเก็บ phase labels, week ranges, fills จาก Step 05 เป็น configuration metadata ใน Markdown
-5. เขียน sourced literals สำหรับ inputs และ semantic judgments เขียน backtick-wrapped formulas สำหรับ arithmetic และ mechanical checks คง QA test-case inputs, role totals, PM, warranty, selected contingency และ reserve ตาม source ไม่แทน judgment ด้วยสูตรตรวจว่าช่องไม่ว่าง
+5. เขียน sourced literals สำหรับ inputs และ semantic judgments เขียน backtick-wrapped formulas สำหรับ arithmetic และ mechanical checks คง QA test-case inputs, role totals, PM, warranty, selected contingency และ reserve ตาม source. ใช้ actor/system และ source reference ของแต่ละ operation ไม่คัด actor เดียวทั้ง inventory. คง ASM refs และสถานะ Assumption/Default แม้ได้รับอนุญาตให้ใช้ใน baseline
 6. ตรวจ formula safety ตาม §5.4 ข้อความที่เริ่มด้วย `=`, `+`, `-`, `@` ต้องไม่ถูกส่งเป็นสูตรโดยไม่ตั้งใจ หยุดเพื่อจัดการ literal อย่างปลอดภัยหรือใช้ textual prefix ที่บอกชัดเจน อย่าใช้ apostrophe escape เป็นหลักประกัน
-7. ประเมิน VAL-01 ถึง VAL-14 พร้อม independent numeric reconciliation ระบุ source evidence และ Warning/Fail ที่ต้องแก้ สูตรใน Markdown ยังไม่ได้ recalculation จึงใช้ `Not recalculated` และระบุข้อจำกัด ไม่ประกาศว่า formula checks ผ่านเพราะเขียนไฟล์ได้
+7. ประเมิน VAL-01 ถึง VAL-14 พร้อม independent numeric reconciliation และ semantic source review ตาม §7. ตรวจ VAL-01 ทุก role × bucket และ VAL-08 ทุกสมการ ไม่ใช้ยอดรวมเดียวหรือ range ordering แทน. ส่งต่อ Warning/Fail จากแถวถึง README พร้อม row/cell evidence และ rationale/action. สูตรยังไม่ได้ recalculation จึงใช้ `Not recalculated` ไม่ประกาศ formula checks ผ่านเพราะเขียนไฟล์ได้
 8. วาง reviewer summary, source revisions, changed-since-last-review และ gate ให้คนตัดสินใจได้ โดยไม่เพิ่ม H2 ที่ converter จะเข้าใจเป็น sheet ใหม่ เก็บ schema 10 sheets ตาม contract และบันทึก approval ของ revision ปัจจุบัน
 
 ## ผลลัพธ์และจุดหยุด

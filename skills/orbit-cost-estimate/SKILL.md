@@ -13,8 +13,8 @@ description: "Plan software delivery from TOR/RFP through scope, architecture, e
 
 1. เลือกงานจากตาราง actions ด้านล่าง.
 2. เปิด `SKILL.md` ของ action นั้นเพื่อดู input, ขั้นตอนและ output.
-3. โหลด principles ที่ action ระบุ และอ่าน contract เต็มก่อนสร้างผลงาน.
-4. ใช้ reference เพิ่มเฉพาะเมื่อ action ต้องใช้ rubric, defaults หรือ tooling นั้น.
+3. โหลด contract, principles และ references ที่จำเป็นตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) ให้ครบก่อนตัดสินผล รวมถึงการปฏิเสธหรือขอ prerequisite.
+4. ใช้รายการ dependencies ของ action ที่เลือก ไม่เปิดทั้ง suite. ใช้ไฟล์ unchanged ที่อ่านครบแล้วซ้ำได้.
 
 ทุก action อยู่ระดับเดียวกันในชุด skills. ลิงก์ในเอกสารอ้างจากตำแหน่ง skill ที่ติดตั้ง. Paths ใต้ `output/` หมายถึง working project ของผู้ใช้ ไม่ใช่ directory ของ skill.
 
@@ -41,10 +41,10 @@ Planning pipeline เดินตามลำดับ Step 00, 01, 02, 03.1, 03
 
 Workbook เป็น reporting workflow แยก. เตรียม Markdown ก่อน แล้วรอ review/authorization ก่อน XLSX เว้นแต่มี `generate both` แล้ว. Diagram ทำได้เมื่อ architecture พร้อม ไม่ต้องรอ sizing หรือ risk.
 
-1. อ่านคำขอและตรวจ artifacts ที่มีอยู่. ตรวจ source revision, approval และ relevant details ตาม action contract.
-2. หากผู้ใช้ระบุ action ให้เลือก action นั้น. ถ้า prerequisites ไม่ครบ ให้แจ้ง artifact หรือ decision ที่ขาด. ห้ามสร้าง approval หรือข้าม upstream checks.
-3. หากผู้ใช้ขอ continue ให้เลือกขั้นถัดจาก approved artifacts ที่ตรวจแล้ว. อย่าใช้ filename หรือการมีไฟล์เป็นหลักฐานอนุมัติ.
-4. ก่อนทำงาน โหลดกฎร่วมด้านล่างและกฎเพิ่มตาม action. หลักฐาน unchanged ที่อ่านแล้วใน session ใช้ซ้ำได้.
+1. อ่านคำขอและระบุ action ที่ต้องการ. หากผู้ใช้ขอ continue ให้ตรวจ artifacts เพื่อเลือกขั้นถัดไป โดยไม่ถือ filename หรือการมีไฟล์เป็น approval.
+2. โหลดกฎร่วมด้านล่างและ dependencies ของ action ที่เลือกตามวิธีอ่านร่วมให้ครบก่อนตัดสินผล action.
+3. ตรวจ source revision, approval และ relevant detail ของ project inputs ตาม contract. ถ้า prerequisites ไม่ครบ ให้แจ้ง artifact หรือ decision ที่ขาด. ห้ามสร้าง approval หรือข้าม upstream checks.
+4. เก็บรายการ dependencies กับ read evidence สั้น ๆ ตามวิธีอ่านร่วม ไม่คัดลอกกฎทั้งหมดลงคำตอบ.
 5. ให้ action ผลิตเฉพาะ output ของตัวเองและตรวจ mandatory gates. เมื่อ action ส่งกลับ router จะตัดสินใจว่าจะหยุดหรือไปขั้นถัดไปตาม authorization.
 6. ถ้าไม่ได้รับ `run all steps continuously` ให้หยุดที่ review gate. หากได้รับ ให้เดินต่อได้เฉพาะเมื่อ quality gates ผ่านและบันทึก Approval Basis/assumptions/defaults แล้ว. ไม่ถือเป็น client หรือ contractual sign-off.
 7. เมื่อจบ ให้บอก output paths, revision/approval state, remaining blockers และ action ถัดไปที่เป็นไปได้. ไม่เขียน headline numbers ซ้ำจาก artifact.

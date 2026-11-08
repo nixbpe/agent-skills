@@ -5,6 +5,8 @@ description: "กำหนด Step 01 intake และ scope จาก Step 00 �
 
 # กำหนด intake และขอบเขตงาน
 
+ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+
 ## ใช้เมื่อ
 
 ใช้เมื่อ Step 00 ได้รับอนุมัติแล้วและต้องแปลงข้อเท็จจริงกับมติเป็นขอบเขตงานที่ตรวจนับและส่งต่อให้ออกแบบ architecture ได้

@@ -5,6 +5,8 @@ description: "ออกแบบ Step 02 architecture และ constraints จ�
 
 # ออกแบบ architecture และข้อจำกัด
 
+ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+
 ## ใช้เมื่อ
 
 ใช้เมื่อมี Step 00 baseline และ Step 01 ที่อนุมัติแล้ว ต้องกำหนด architecture เพื่อส่งต่อ feature inventory โดยไม่เพิ่ม scope หรือคำนวณ effort

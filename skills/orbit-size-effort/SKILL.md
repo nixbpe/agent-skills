@@ -5,30 +5,33 @@ description: "ประเมิน Raw MD จาก atomic subfeature และ
 
 # ประเมิน Raw MD และตรวจ sizing คู่กัน
 
+อ่านทุกไฟล์ใน `กฎที่ต้องอ่าน` ให้ครบก่อนตรวจ project inputs หรือตัดสินผล action รวมถึงการถามหรือหยุด ใช้ [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) และบอกไฟล์ที่อ่านครบในคำตอบ แม้ผลลัพธ์คือ prerequisite ไม่ผ่าน.
+
 ## ใช้เมื่อ
 
 ใช้เมื่อ Step 03.3 อนุมัติแล้ว และต้องการ Raw MD ตาม role/bucket หรือแก้ sizing baseline พร้อม companion review ไม่ต้องเรียก review skill แยก
 
-## สิ่งที่ต้องเตรียม
-
-อ่าน `output/step_03_03_wbs_baseline.md`, `output/step_03_02_backlog_inventory.md`, `output/step_03_01_feature_inventory.md` และ approved architecture/integration artifact พร้อม revision ที่อนุมัติ ถ้า WBS ยังไม่อนุมัติ ให้หยุด
-
-เส้นทาง `output/` และ input artifacts อ้างจาก working project ไม่ใช่โฟลเดอร์ skill ส่วน Markdown links อ้างจาก installed skill นี้
-
 ## กฎที่ต้องอ่าน
 
-อ่าน [contract ฉบับเต็ม](references/contract.md) ก่อนทำงานทุกครั้ง รวม templates, gates และ appendices และโหลดหลักการต่อไปนี้แม้เรียก action โดยตรงโดยไม่ผ่าน router
+อ่าน [contract ฉบับเต็ม](references/contract.md) รวม templates, gates และ appendices พร้อม principles ต่อไปนี้ตามวิธีอ่านร่วม ใช้ไฟล์ที่อ่านครบแล้วและไม่เปลี่ยนซ้ำได้.
 
 - [หลักฐานและ traceability](../principle-orbit-evidence-and-traceability/SKILL.md)
 - [การอนุมัติแต่ละ revision](../principle-orbit-explicit-approval/SKILL.md)
 - [Baseline และ scenarios](../principle-orbit-baseline-and-scenarios/SKILL.md)
 - [เอกสารสำหรับผู้ตรวจทาน](../principle-orbit-reviewer-first/SKILL.md)
+- [Writing style](../principle-orbit-reviewer-first/references/writing-style.md)
 - [Planning เท่านั้น ไม่ทำ pricing](../principle-orbit-planning-not-pricing/SKILL.md)
 - [ตรวจสอบก่อนเผยแพร่](../principle-orbit-verify-before-publish/SKILL.md)
 - [การนับ effort และ role boundaries](../principle-orbit-effort-accounting/SKILL.md)
 - [Role boundary reference](../principle-orbit-effort-accounting/references/roles.md)
 - [Risk และ reserve boundaries](../principle-orbit-risk-and-reserve/SKILL.md)
 - [Estimation calibration](../principle-orbit-effort-accounting/references/estimation-calibration.md)
+
+## สิ่งที่ต้องเตรียม
+
+อ่าน `output/step_03_03_wbs_baseline.md`, `output/step_03_02_backlog_inventory.md`, `output/step_03_01_feature_inventory.md` และ approved architecture/integration artifact พร้อม revision ที่อนุมัติ ถ้า WBS ยังไม่อนุมัติ ให้หยุด
+
+เส้นทาง `output/` และ input artifacts อ้างจาก working project ไม่ใช่โฟลเดอร์ skill ส่วน Markdown links อ้างจาก installed skill นี้
 
 ## ขั้นตอนทำงาน
 

@@ -34,6 +34,8 @@ description: "Use when Orbit writes a stakeholder-facing summary, decision gate,
 
 Self-check tables สรุป passing checks หนึ่งบรรทัดและทำตารางเฉพาะ Warning/Fail. ข้อยกเว้นคือ Step 06 final checks ต้องแสดงครบ 23 rows. ไม่ตรวจเรื่องเดียวซ้ำหลาย gate ใน artifact เดียว.
 
+แสดง MD และ FTE ด้วยทศนิยมสั้น โดยทั่วไปไม่เกิน 2 ตำแหน่ง ตัดศูนย์ท้ายที่ไม่จำเป็น. คำนวณและตรวจ gates ด้วยค่าความละเอียดเต็ม ไม่ใช้ค่าปัดเศษกลับไปคำนวณ. ถ้า contract ระบุ precision เฉพาะ ให้ใช้ตามนั้น. แสดง ratio เป็นเปอร์เซ็นต์จริง เช่น `0.975` แสดง `97.5%` ไม่ใช่ `0.975%`. รายการราย role ใช้ตารางหรือ `SA 12 MD, BA 8 MD` ไม่แสดง dict/object repr.
+
 ## Metadata ของ artifact
 
 - Title ระบุ project และ step.

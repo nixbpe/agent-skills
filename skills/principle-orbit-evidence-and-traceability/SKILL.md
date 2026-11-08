@@ -17,6 +17,8 @@ description: "Use when Orbit planning turns TOR facts, assumptions or decisions 
 4. ให้ข้อเท็จจริงอยู่ในตารางเจ้าของเดียว. ขั้นถัดไปอ้าง ID/section และเพิ่มเฉพาะ delta. การทำ summary, calculation หรือ workbook ซ้ำค่าได้เมื่อมี source และ reconciliation.
 5. อย่าถาม decision ที่แก้แล้วซ้ำ. เมื่อได้คำตอบ ย้ายออกจาก open list และบันทึกผลพร้อม evidence ใน decision log.
 6. Required section ที่ใช้ไม่ได้ต้องใส่ `N/A — [reason]`. ห้ามปล่อยว่างหรือใช้ placeholder แทนข้อเท็จจริงในผลงานจริง.
+7. รักษา actor, สิทธิ์ที่อนุญาต และข้อห้ามของแต่ละ requirement ผ่าน feature, backlog, WBS และรายงาน. อ้าง source ID และข้อจำกัดเดิม แม้หลายรายการใช้ surface เดียวกัน. ห้ามแทน actor เฉพาะรายการด้วย `admin/viewer` หรืออนุมานสิทธิ์จากชื่อ role.
+8. เมื่อ source ขัดกัน ให้บันทึก conflict และ decision ที่ต้องแก้ ไม่ขยายสิทธิ์หรือข้ามข้อห้ามเอง. การอนุญาตให้ประเมินไม่ใช่หลักฐานยืนยัน requirement ตาม [Explicit approval](../principle-orbit-explicit-approval/SKILL.md).
 
 ## ขอบเขตของ IDs
 
@@ -30,6 +32,8 @@ description: "Use when Orbit planning turns TOR facts, assumptions or decisions 
 | `SUR-XX` | ใช้ surface IDs จาก approved architecture. ห้ามสมมติว่า backend ต้องเป็น `SUR-04` |
 
 Minimum traceability fields คือ ID, Source, Description, Status และ Scope / Architecture / WBS / Sizing / Risk mappings. Status ใช้ `Confirmed`, `Assumption`, `Open`, `Excluded` หรือ `Scenario`. เติม mapping เมื่อ artifact นั้นพร้อม หรือระบุ N/A พร้อมเหตุผล.
+
+ถ้า schema แยกสถานะกับ baseline treatment ได้ ให้คง `Status = Assumption` และระบุ `Included for estimation` พร้อม ASM/authorization ref ใน treatment. ถ้ามีเพียงช่องเดียว ให้ใช้ `Assumption` พร้อมคำอธิบายการรวมฐาน ไม่ใส่ใน confirmed scope โดยไม่มีหลักฐานยืนยัน.
 
 ## สิ่งที่ต้องเห็นในผลงาน
 

@@ -5,6 +5,7 @@
 # uses different sheet/table names.
 
 defaults:
+  font_name: "Noto Sans Thai"
   number_format:
     "MD": "0.0"
     "FTE": "0.00"
