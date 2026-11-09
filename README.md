@@ -6,9 +6,11 @@ your home directory. The installer requires Python 3.9 or newer and no Python
 dependencies. Workbook export has separate Python requirements listed below.
 No npm publishing is needed.
 
-The repository includes the Orbit planning suite: 1 workflow router, 12 action
-skills and 8 shared principles. Commands, Claude subagents and pi prompt
-templates remain empty.
+The Orbit planning suite contains 1 workflow router, 12 action skills, and 8
+shared principles. The English software delivery suite contains 11 action skills
+and 4 shared principles. Two optional execution profiles, `delivery-worker` and
+`delivery-reviewer`, have separate Claude and pi definitions. Commands and pi
+prompt templates remain empty because actions are invoked as skills.
 
 ## Layout
 
@@ -22,6 +24,7 @@ templates remain empty.
 | `commands/*.md` | Claude slash commands | `~/.claude/commands/<name>.md` |
 | `agents/*.md` | Claude subagent definitions | `~/.claude/agents/<name>.md` |
 | `pi/prompts/*.md` | pi prompt templates | Loaded through the pi package |
+| `pi/agents/*.md` | pi subagent definitions | Discovered from this package by the optional `pi-subagents` extension |
 | `package.json` | Private pi package manifest | Registered by absolute checkout path |
 | `scripts/setup.py` | Install, uninstall and check commands | Run from this checkout |
 | `tests/test_setup.py` | Installer safety regressions | Run locally |
@@ -133,6 +136,105 @@ Shared policy lives in `principle-orbit-*`. Each action owns its detailed
 contract. The router owns selection and sequencing, not duplicate formulas.
 Optional architecture profiles are references to evaluate, not required stacks.
 
+## Software delivery skills
+
+Use `delivery-*` for software requirements, design, implementation, review, and
+release qualification. These skills use the working project's contracts and
+commands. They do not require a particular stack, review vendor, or planning
+hierarchy.
+
+### Choose a delivery action
+
+| Goal | Skill | Result |
+|---|---|---|
+| Define product scope and criteria | [delivery-define-work](skills/delivery-define-work/SKILL.md) | Accepted decisions, proposals, and observable criteria |
+| Resolve shared technical contracts | [delivery-design-solution](skills/delivery-design-solution/SKILL.md) | Changed contracts and bounded tasks |
+| Design UI flows and states | [delivery-design-experience](skills/delivery-design-experience/SKILL.md) | Flow, state, and accessibility requirements |
+| Implement one authorized change | [delivery-implement-change](skills/delivery-implement-change/SKILL.md) | Changed behavior and author-produced proof |
+| Diagnose and repair a failure | [delivery-debug](skills/delivery-debug/SKILL.md) | Causal diagnosis, repair, and regression proof |
+| Review source and supplied evidence | [delivery-review-change](skills/delivery-review-change/SKILL.md) | Static findings and a recommendation |
+| Assess security boundaries | [delivery-secure-boundaries](skills/delivery-secure-boundaries/SKILL.md) | Threats, controls, and coverage gaps |
+| Assign and integrate owned work | [delivery-coordinate-work](skills/delivery-coordinate-work/SKILL.md) | Coordinated handoffs and integration evidence |
+| Deliver a requested change as a PR | [delivery-deliver-change](skills/delivery-deliver-change/SKILL.md) | An unmerged PR after authorized publication and verification |
+| Resolve an existing PR's findings | [delivery-review-pr](skills/delivery-review-pr/SKILL.md) | Head-specific evidence and bounded repair results |
+| Qualify a merge-ready release candidate | [delivery-qualify-release](skills/delivery-qualify-release/SKILL.md) | A source-bound readiness verdict, without deployment |
+
+Invoke an action directly when its inputs are available. For example, use
+`/delivery-debug` in Claude or `/skill:delivery-debug` in pi. Supply the failure
+evidence, affected project, and authorized repair scope. No router or complete
+planning sequence is required.
+
+Each action lists its inputs, required reading, steps, verification, and stop
+conditions. Follow links relative to the document that contains them. Keep all
+15 delivery skills installed together so their dependencies resolve.
+
+### Apply shared principles
+
+| Principle | Decision it governs |
+|---|---|
+| [principle-delivery-authority](skills/principle-delivery-authority/SKILL.md) | Scope, role limits, and separate publication permissions |
+| [principle-delivery-owned-writes](skills/principle-delivery-owned-writes/SKILL.md) | File ownership, shared resources, transfer, and stopping writers |
+| [principle-delivery-source-evidence](skills/principle-delivery-source-evidence/SKILL.md) | Verification status, independent review, severity mapping, and candidate identity |
+| [principle-delivery-trust-boundaries](skills/principle-delivery-trust-boundaries/SKILL.md) | Untrusted input, access control, credentials, and destructive operations |
+
+Use the [project context contract](skills/delivery-coordinate-work/references/project-context.md)
+to locate project-specific facts in existing instructions, scripts, and accepted
+sources. Do not create a new configuration file just to use a skill.
+
+Ordinary implementation needs no release manifest. Release qualification binds
+`candidateId`, `acceptanceVersion`, and `manifestDigest` to immutable source and
+accepted criteria. PR-only work can use a source identity such as `PR-42-C1`.
+Review findings retain their source severity and use the project's blocking
+mapping. Unknown mappings remain unresolved.
+
+### Choose an execution profile
+
+The main session coordinates work. It can implement a small change when project
+policy permits. Use a separate worker for role restrictions or independent
+ownership. Use a separate reviewer when independent review is required.
+
+| Profile | Tools and responsibility | Limits |
+|---|---|---|
+| `delivery-worker` | Reads, edits, and executes assigned checks | No implicit publication, production access, or child delegation |
+| `delivery-reviewer` | Reads source and supplied evidence | No command execution, file edits, repairs, or release approval |
+
+The coordinator supplies resolved skill paths, accepted criteria, ownership,
+verification scope, and authorization through the
+[assignment contract](skills/delivery-coordinate-work/references/assignment-and-handoff.md).
+For a reviewer, it also supplies diffs and Git metadata collected by an
+authorized inspection owner. No profile hardcodes a model.
+
+The installer links Claude profiles from `agents/`. pi profiles are exposed by
+the `pi-subagents.agents` field in `package.json`. To use them, install the
+optional extension in your pi environment:
+
+```sh
+pi install npm:pi-subagents
+```
+
+Register this checkout with the repository installer, then start a fresh pi
+session. The extension discovers the two definitions under `pi/agents/`.
+Existing same-name project or user profiles can take precedence. Inspect the
+effective definition before relying on its tools. The installer does not install
+the extension or change model overrides.
+
+The skills work without subagents for procedures that permit one actor.
+Self-review does not satisfy independent review. Tool lists constrain available
+operations, but they do not isolate files, credentials, or environments. Keep
+mandatory permissions in runtime configuration or always-on project instructions.
+
+### Adopt the suite in a project
+
+Install the suite without deleting existing project instructions. Map the
+project's commands, review policy, roles, and release identifiers to the shared
+contracts. Preserve any stricter project restrictions.
+
+Check skill discovery and effective worker and reviewer tools in each runtime.
+Exercise a bounded implementation, a read-only review, and a failed release gate
+before removing replaced project definitions. Verify that existing review and
+publication requirements still hold. This repository does not migrate another
+project or modify its settings during installation.
+
 ## Use
 
 Run these commands from the checkout:
@@ -225,10 +327,12 @@ Claude Code invokes a skill as `/<name>`; pi uses `/skill:<name>`.
 
 - Put Claude slash commands in `commands/*.md`.
 - Put Claude subagent definitions in `agents/*.md`.
+- Put pi subagent definitions in `pi/agents/*.md`. Install `pi-subagents` to load them through this package's manifest.
 - Put pi prompt templates in `pi/prompts/*.md`; invoke them as `/<name>`.
 
-Claude commands are not automatically converted into pi prompts. pi subagents
-require an extension; Claude's `agents/` directory is not installed into pi.
+Claude commands are not automatically converted into pi prompts. Claude's
+`agents/` directory is not installed into pi. Use native tool names in each
+runtime's definitions and inspect the effective profile after registration.
 
 ## Verify
 

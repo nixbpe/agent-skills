@@ -5,5 +5,8 @@
   "pi": {
     "skills": ["./skills"],
     "prompts": ["./pi/prompts/*.md"]
+  },
+  "pi-subagents": {
+    "agents": ["./pi/agents"]
   }
 }
