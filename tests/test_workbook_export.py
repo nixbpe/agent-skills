@@ -8,7 +8,7 @@ from openpyxl import load_workbook
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXPORT = ROOT / "skills/orbit-export-workbook/scripts/md_to_workbook.py"
+EXPORT = ROOT / "plugins/orbit-cost-estimate/skills/orbit-export-workbook/scripts/md_to_workbook.py"
 
 
 class WorkbookExportTests(unittest.TestCase):

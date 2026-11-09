@@ -12,7 +12,7 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parent.parent
-VERIFIER = ROOT / "skills/orbit-export-workbook/scripts/verify_workbook.py"
+VERIFIER = ROOT / "plugins/orbit-cost-estimate/skills/orbit-export-workbook/scripts/verify_workbook.py"
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 
 

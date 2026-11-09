@@ -44,6 +44,8 @@ The optional `delivery-worker` profile permits file edits and command execution.
 
 The optional `delivery-reviewer` profile permits source inspection without command execution or file edits. An authorized inspection owner supplies the diff, Git metadata, and runtime evidence. The profile does not grant acceptance or publication authority.
 
+Claude plugin installations expose these profiles as `delivery:delivery-worker` and `delivery:delivery-reviewer`. Direct Claude installations and pi use the unprefixed names. Select the registered runtime name rather than assuming that a profile's filename is its invocation name.
+
 A skill cannot create child sessions, install an extension, or enforce a permission boundary by itself. When the required runtime capability is missing, report it. Sequential self-review cannot replace a required independent reviewer.
 
 ## Evidence storage

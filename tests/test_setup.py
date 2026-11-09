@@ -41,6 +41,21 @@ class SetupSafetyTests(unittest.TestCase):
             for path in self.home.rglob("*")
         }
 
+    def install_legacy_links(self):
+        self.run_setup("install")
+        state_path = self.home / ".local/state/agent-skills/claude.json"
+        state = json.loads(state_path.read_text())
+        for relative, entry in state["files"].items():
+            path = Path(relative)
+            if entry["kind"] != "link" or path.parts[1] not in ("skills", "agents"):
+                continue
+            entry["target"] = str(self.repo / path.parts[1] / path.name)
+            link = self.home / relative
+            link.unlink()
+            link.symlink_to(entry["target"])
+            self.assertFalse(link.exists())
+        state_path.write_text(json.dumps(state))
+
     def test_dry_run_and_repeated_install_preserve_state(self):
         self.run_setup("install", "--dry-run")
         self.assertEqual(self.snapshot(), {})
@@ -112,6 +127,62 @@ class SetupSafetyTests(unittest.TestCase):
 
     def test_preexisting_package_is_not_adopted(self):
         self.put(".pi/agent/settings.json", json.dumps({"packages": [str(self.repo)]}))
+        before = self.snapshot()
+        self.run_setup("install", success=False)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_install_upgrades_dangling_links_from_legacy_resource_roots(self):
+        self.install_legacy_links()
+        before = self.snapshot()
+        self.run_setup("check", success=False)
+        self.assertEqual(self.snapshot(), before)
+        self.run_setup("install", "--dry-run")
+        self.assertEqual(self.snapshot(), before)
+        self.run_setup("install")
+        sources = {
+            ".claude/skills/orbit-cost-estimate": "plugins/orbit-cost-estimate/skills/orbit-cost-estimate",
+            ".claude/skills/delivery-debug": "plugins/delivery/skills/delivery-debug",
+            ".claude/agents/delivery-worker.md": "plugins/delivery/agents/delivery-worker.md",
+            ".claude/agents/delivery-reviewer.md": "plugins/delivery/agents/delivery-reviewer.md",
+        }
+        for relative, source in sources.items():
+            with self.subTest(resource=relative):
+                link = self.home / relative
+                self.assertTrue(link.is_symlink())
+                self.assertTrue(link.samefile(self.repo / source))
+        self.run_setup("check")
+        self.run_setup("uninstall")
+        self.assertFalse(any(path.is_file() or path.is_symlink() for path in self.home.rglob("*")))
+
+    def test_uninstall_removes_legacy_links_without_source_resources(self):
+        self.install_legacy_links()
+        shutil.rmtree(self.repo / "plugins")
+        self.run_setup("uninstall")
+        self.assertFalse(any(path.is_file() or path.is_symlink() for path in self.home.rglob("*")))
+
+    def test_changed_legacy_link_blocks_upgrade_and_uninstall(self):
+        self.install_legacy_links()
+        link = self.home / ".claude/agents/delivery-worker.md"
+        link.unlink()
+        link.symlink_to(self.repo / "user-owned-missing-agent.md")
+        before = self.snapshot()
+        for action in ("install", "uninstall", "check"):
+            self.run_setup(action, success=False)
+            self.assertEqual(self.snapshot(), before)
+
+    def test_missing_plugin_skill_document_blocks_update(self):
+        self.run_setup("install")
+        document = self.repo / "plugins/delivery/skills/delivery-debug/SKILL.md"
+        document.unlink()
+        before = self.snapshot()
+        self.run_setup("check", "--source-only", success=False)
+        self.run_setup("install", success=False)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_duplicate_plugin_skill_name_blocks_update(self):
+        self.run_setup("install")
+        source = self.repo / "plugins/delivery/skills/delivery-debug"
+        shutil.copytree(source, self.repo / "plugins/orbit-cost-estimate/skills/delivery-debug")
         before = self.snapshot()
         self.run_setup("install", success=False)
         self.assertEqual(self.snapshot(), before)

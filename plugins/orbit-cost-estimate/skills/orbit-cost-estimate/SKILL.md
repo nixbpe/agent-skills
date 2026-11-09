@@ -91,7 +91,7 @@ Principles เป็นกฎตัดสินใจ ไม่ใช่ขั�
 - "ใช้ orbit-export-workbook แปลง output/estimation_workbook.md และรายงานสถานะ recalculation."
 - "ใช้ orbit-draw-architecture จาก output/step_02_architecture_constraints.md."
 
-ใน Claude Code เรียก `/orbit-cost-estimate` หรือ action name โดยตรง. ใน pi เรียก `/skill:orbit-cost-estimate` หรือ `/skill:<action-name>`.
+ใน Claude plugin เรียก `/orbit-cost-estimate:orbit-cost-estimate` หรือ `/orbit-cost-estimate:<action-name>`. เมื่อติดตั้งตรงใน Claude Code เรียก `/orbit-cost-estimate` หรือ `/<action-name>`. ใน pi เรียก `/skill:orbit-cost-estimate` หรือ `/skill:<action-name>`.
 
 ## ขอบเขตการติดตั้งและเครื่องมือ
 

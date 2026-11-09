@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "pi": {
-    "skills": ["./skills"],
+    "skills": [
+      "./plugins/orbit-cost-estimate/skills",
+      "./plugins/delivery/skills"
+    ],
     "prompts": ["./pi/prompts/*.md"]
   },
   "pi-subagents": {

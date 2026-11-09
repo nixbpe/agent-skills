@@ -12,6 +12,11 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 AGENTS = ("claude", "pi")
+RESOURCE_ROOTS = {
+    "skills": ("plugins/orbit-cost-estimate/skills", "plugins/delivery/skills"),
+    "commands": ("commands",),
+    "agents": ("plugins/delivery/agents",),
+}
 
 
 def digest(content):
@@ -62,17 +67,26 @@ def matches(path, entry):
 
 def validate_sources():
     manifest = load_json(ROOT / "package.json")
-    if manifest.get("pi") != {"skills": ["./skills"], "prompts": ["./pi/prompts/*.md"]}:
-        raise ValueError("package.json must expose skills/ and pi/prompts/*.md")
-    for directory in ("skills", "commands", "agents", "pi/prompts"):
+    if manifest.get("pi") != {
+        "skills": ["./" + directory for directory in RESOURCE_ROOTS["skills"]],
+        "prompts": ["./pi/prompts/*.md"],
+    }:
+        raise ValueError("package.json must expose the plugin skill directories and pi/prompts/*.md")
+    directories = [directory for roots in RESOURCE_ROOTS.values() for directory in roots]
+    for directory in (*directories, "pi/prompts"):
         if not (ROOT / directory).is_dir():
             raise ValueError("Missing resource directory: " + directory)
-    for skill in sorted((ROOT / "skills").iterdir()):
-        if skill.name.startswith("."):
-            continue
+    skills = [skill for directory in RESOURCE_ROOTS["skills"]
+              for skill in sorted((ROOT / directory).iterdir())
+              if not skill.name.startswith(".")]
+    names = set()
+    for skill in skills:
+        if skill.name in names:
+            raise ValueError("Duplicate skill name: " + skill.name)
+        names.add(skill.name)
         document = skill / "SKILL.md"
         if not skill.is_dir() or not document.is_file():
-            raise ValueError("Expected skills/<name>/SKILL.md: " + str(skill))
+            raise ValueError("Expected <skill>/SKILL.md: " + str(skill))
         text = document.read_text(encoding="utf-8")
         frontmatter = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)", text, re.S)
         if not frontmatter:
@@ -96,13 +110,14 @@ def desired_files(agent, instructions):
     instruction_path = ".claude/CLAUDE.md" if agent == "claude" else ".pi/agent/AGENTS.md"
     files = {instruction_path: {"kind": "file", "sha256": digest(instructions)}}
     if agent == "claude":
-        for directory in ("skills", "commands", "agents"):
+        for directory, roots in RESOURCE_ROOTS.items():
             pattern = "*/SKILL.md" if directory == "skills" else "*.md"
-            for source in sorted((ROOT / directory).glob(pattern)):
-                source = source.parent if directory == "skills" else source
-                files[".claude/" + directory + "/" + source.name] = {
-                    "kind": "link", "target": str(source)
-                }
+            for root in roots:
+                for source in sorted((ROOT / root).glob(pattern)):
+                    source = source.parent if directory == "skills" else source
+                    files[".claude/" + directory + "/" + source.name] = {
+                        "kind": "link", "target": str(source)
+                    }
     return files
 
 
