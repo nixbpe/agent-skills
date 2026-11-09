@@ -11,7 +11,11 @@ description: "Use when an Orbit action checks prerequisites, asks stakeholder de
 
 ## การอ่าน dependencies
 
-ใช้กฎนี้ทั้งผ่าน router และเรียก action โดยตรง ก่อนสร้างผลงาน ถามคำถาม หรือปฏิเสธเพราะ prerequisite ขาด.
+อ่าน action และ principle นี้ครบก่อนตรวจ inputs ทั้งผ่าน router และเรียกตรง.
+
+- Preflight ตรวจได้เฉพาะ input path ที่ผู้ใช้ระบุชัดเจน โดย resolve จาก working project. ตรวจว่าเป็นไฟล์และเปิดอ่านได้จริงเท่านั้น ไม่ parse เนื้อหาหรือตรวจ revision/approval.
+- ถ้าไฟล์หาย เป็น directory หรืออ่านไม่ได้ ให้รายงาน path/error จริงเป็น input access blocker แล้วหยุดขอไฟล์หรือสิทธิ์อ่าน. ยังไม่ถือว่าตรวจ prerequisites หรือ quality gates และไม่สร้าง artifact ทดแทน.
+- ถ้าอ่านได้ หรือไม่มี explicit input path ให้โหลด dependencies ด้านล่างก่อนค้น artifacts ตรวจเนื้อหา ถามหรือตัดสิน approval/readiness. Path ตัวอย่างและ defaults ไม่ใช่ explicit inputs และการเปิดไฟล์ไม่อนุญาต fallback หรือข้าม gate.
 
 1. ระบุรายการไฟล์ที่ต้องอ่านจาก action ที่เลือก ได้แก่ contract, principles ทุกข้อ และ references ที่เงื่อนไขตรงกับงาน. อ่านแต่ละไฟล์ให้ครบ รวม templates และ appendices. ไม่โหลด action อื่นหรือทั้ง suite.
 2. อ่านครั้งละหนึ่งไฟล์ด้วยช่วงบรรทัดจำกัด. ถ้าผลถูกตัด ให้ตามอ่านช่วงที่ขาดจริงจนจบ ไม่ถือว่าคำสั่งอ่านสำเร็จแปลว่าเห็นครบ และไม่เดาช่วงที่ถูกละไว้.

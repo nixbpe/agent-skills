@@ -21,7 +21,7 @@ description: "แปลง estimation_workbook.md ที่ตรวจทาน
 
 ## กฎที่ต้องอ่าน
 
-ก่อนสร้างผลงาน ถามคำถาม หรือหยุดเพราะ prerequisite ขาด ให้ใช้ [dependency loading protocol](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies). อ่าน [export runtime contract](references/contract.md), [canonical workbook contract ทั้งฉบับ](../orbit-prepare-workbook/references/contract.md) และ principles ทุกไฟล์ด้านล่างทีละไฟล์ด้วยช่วงบรรทัดจำกัดจนจบ รวมส่วนที่ถูกตัด. เก็บ read evidence และ reuse เฉพาะ content ที่ไม่เปลี่ยน แม้เรียก action โดยตรง
+ใช้ [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) กับ [export runtime contract](references/contract.md), [canonical workbook contract](../orbit-prepare-workbook/references/contract.md) และ principles ด้านล่าง.
 
 - [Evidence and traceability](../principle-orbit-evidence-and-traceability/SKILL.md)
 - [Explicit approval](../principle-orbit-explicit-approval/SKILL.md)

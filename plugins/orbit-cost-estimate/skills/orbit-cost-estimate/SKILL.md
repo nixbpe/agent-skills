@@ -9,12 +9,13 @@ description: "Plan software delivery from TOR/RFP through scope, architecture, e
 
 ใช้ skill นี้เมื่อยังไม่แน่ใจว่าจะเริ่ม action ไหน หรือต้องการเดินหลายขั้นต่อกัน. ถ้ารู้สิ่งที่ต้องทำและมี approved inputs แล้ว ให้เรียก action นั้นโดยตรงได้.
 
+ถ้าถามเพียงชื่อ skill ให้ตอบจากตารางเลือก action และหยุด ไม่ตรวจ readiness หรือเริ่มงาน.
+
 ## เริ่มอ่านตรงไหน
 
 1. เลือกงานจากตาราง actions ด้านล่าง.
 2. เปิด `SKILL.md` ของ action นั้นเพื่อดู input, ขั้นตอนและ output.
-3. โหลด contract, principles และ references ที่จำเป็นตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) ให้ครบก่อนตัดสินผล รวมถึงการปฏิเสธหรือขอ prerequisite.
-4. ใช้รายการ dependencies ของ action ที่เลือก ไม่เปิดทั้ง suite. ใช้ไฟล์ unchanged ที่อ่านครบแล้วซ้ำได้.
+3. เมื่อเริ่มงาน ให้ใช้ dependencies และวิธีอ่านที่ action ระบุ.
 
 ทุก action อยู่ระดับเดียวกันในชุด skills. ลิงก์ในเอกสารอ้างจากตำแหน่ง skill ที่ติดตั้ง. Paths ใต้ `output/` หมายถึง working project ของผู้ใช้ ไม่ใช่ directory ของ skill.
 
@@ -41,30 +42,11 @@ Planning pipeline เดินตามลำดับ Step 00, 01, 02, 03.1, 03
 
 Workbook เป็น reporting workflow แยก. เตรียม Markdown ก่อน แล้วรอ review/authorization ก่อน XLSX เว้นแต่มี `generate both` แล้ว. Diagram ทำได้เมื่อ architecture พร้อม ไม่ต้องรอ sizing หรือ risk.
 
-1. อ่านคำขอและระบุ action ที่ต้องการ. หากผู้ใช้ขอ continue ให้ตรวจ artifacts เพื่อเลือกขั้นถัดไป โดยไม่ถือ filename หรือการมีไฟล์เป็น approval.
-2. โหลดกฎร่วมด้านล่างและ dependencies ของ action ที่เลือกตามวิธีอ่านร่วมให้ครบก่อนตัดสินผล action.
-3. ตรวจ source revision, approval และ relevant detail ของ project inputs ตาม contract. ถ้า prerequisites ไม่ครบ ให้แจ้ง artifact หรือ decision ที่ขาด. ห้ามสร้าง approval หรือข้าม upstream checks.
-4. เก็บรายการ dependencies กับ read evidence สั้น ๆ ตามวิธีอ่านร่วม ไม่คัดลอกกฎทั้งหมดลงคำตอบ.
-5. ให้ action ผลิตเฉพาะ output ของตัวเองและตรวจ mandatory gates. เมื่อ action ส่งกลับ router จะตัดสินใจว่าจะหยุดหรือไปขั้นถัดไปตาม authorization.
-6. ถ้าไม่ได้รับ `run all steps continuously` ให้หยุดที่ review gate. หากได้รับ ให้เดินต่อได้เฉพาะเมื่อ quality gates ผ่านและบันทึก Approval Basis/assumptions/defaults แล้ว. ไม่ถือเป็น client หรือ contractual sign-off.
-7. เมื่อจบ ให้บอก output paths, revision/approval state, remaining blockers และ action ถัดไปที่เป็นไปได้. ไม่เขียน headline numbers ซ้ำจาก artifact.
-
-## Principles ที่ใช้ร่วมกัน
-
-Principles เป็นกฎตัดสินใจ ไม่ใช่ขั้นตอนสร้าง artifact. Action ที่เรียกโดยตรงต้องโหลด principles ของตัวเอง ไม่ต้องอาศัย router โหลดให้.
-
-| Principle | ใช้ตอนไหน |
-|---|---|
-| [Evidence and traceability](../principle-orbit-evidence-and-traceability/SKILL.md) | เปลี่ยน source facts, assumptions และ decisions เป็น artifact ที่ย้อนตรวจได้ |
-| [Explicit approval](../principle-orbit-explicit-approval/SKILL.md) | ตรวจ inputs, ถาม stakeholder, ใช้ defaults และผ่าน review gates |
-| [Baseline and scenarios](../principle-orbit-baseline-and-scenarios/SKILL.md) | เลือก scope, แยก scenario และจัดการ re-baseline |
-| [Effort accounting](../principle-orbit-effort-accounting/SKILL.md) | แตก WBS, sizing, roles, capacity และ warranty |
-| [Risk and reserve](../principle-orbit-risk-and-reserve/SKILL.md) | คำนวณ allowance และเลือก commitment basis |
-| [Verify before publish](../principle-orbit-verify-before-publish/SKILL.md) | ตรวจคุณภาพตัวเลข, workbook หรือ diagram ก่อนเผยแพร่ |
-| [Reviewer-first output](../principle-orbit-reviewer-first/SKILL.md) | จัด summary, metadata, decision gate และภาคผนวกให้คนอ่าน |
-| [Planning, not pricing](../principle-orbit-planning-not-pricing/SKILL.md) | จำกัดขอบเขตทุก action ไม่ให้กลายเป็น costing/pricing |
-
-ก่อน route งานให้อ่าน evidence, approval, baseline, verification, reviewer-first และ planning-not-pricing. โหลด effort-accounting หรือ risk-and-reserve เพิ่มเมื่อเลือกงานในขอบเขตนั้น.
+1. ระบุ action ที่ต้องการ. สำหรับ `continue` ให้อ่าน [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) ก่อนตรวจ artifacts เพื่อเลือกขั้นถัดไป.
+2. โหลด dependencies และตรวจ prerequisites ตาม action ที่เลือก. การมีไฟล์ไม่ใช่ approval.
+3. ให้ action ผลิตเฉพาะ output ของตัวเองและตรวจ mandatory gates. เมื่อ action ส่งกลับ router จะตัดสินใจว่าจะหยุดหรือไปขั้นถัดไปตาม authorization.
+4. ถ้าไม่ได้รับ `run all steps continuously` ให้หยุดที่ review gate. หากได้รับ ให้เดินต่อได้เฉพาะเมื่อ quality gates ผ่านและบันทึก Approval Basis/assumptions/defaults แล้ว. ไม่ถือเป็น client หรือ contractual sign-off.
+5. เมื่อจบ ให้บอก output paths, revision/approval state, remaining blockers และ action ถัดไปที่เป็นไปได้. ไม่เขียน headline numbers ซ้ำจาก artifact.
 
 ## ข้อมูลที่แต่ละขั้นเป็นเจ้าของ
 

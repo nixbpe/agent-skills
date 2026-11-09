@@ -5,7 +5,7 @@ description: "ประเมิน Raw MD จาก atomic subfeature และ
 
 # ประเมิน Raw MD และตรวจ sizing คู่กัน
 
-อ่านทุกไฟล์ใน `กฎที่ต้องอ่าน` ให้ครบก่อนตรวจ project inputs หรือตัดสินผล action รวมถึงการถามหรือหยุด ใช้ [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) และบอกไฟล์ที่อ่านครบในคำตอบ แม้ผลลัพธ์คือ prerequisite ไม่ผ่าน.
+ใช้ [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) กับรายการ `กฎที่ต้องอ่าน`.
 
 ## ใช้เมื่อ
 

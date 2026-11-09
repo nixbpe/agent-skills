@@ -5,7 +5,7 @@ description: "สร้าง dev และ non-dev WBS จาก backlog/invent
 
 # จัด WBS จาก backlog ที่อนุมัติแล้ว
 
-ก่อนตัดสินผล action รวมถึงการถามหรือหยุด ให้โหลด dependencies ตาม [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) โดยใช้รายการใน `กฎที่ต้องอ่าน` ด้านล่าง.
+ใช้ [วิธีอ่านร่วม](../principle-orbit-explicit-approval/SKILL.md#การอ่าน-dependencies) กับรายการ `กฎที่ต้องอ่าน`.
 
 ## ใช้เมื่อ
 

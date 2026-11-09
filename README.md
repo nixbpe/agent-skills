@@ -100,6 +100,7 @@ Use the [Orbit guide](plugins/orbit-cost-estimate/skills/orbit-cost-estimate/SKI
 when starting an estimate or deciding the next step:
 
 ```text
+/orbit-cost-estimate:orbit-cost-estimate Which skill draws an approved architecture? Recommend the skill only. Do not inspect project inputs or start work.
 /orbit-cost-estimate:orbit-cost-estimate Analyze docs/requirements.pdf and stop after Step 00 for review. Ask about unresolved scope before proceeding.
 ```
 
@@ -157,6 +158,7 @@ operations. Each action can run independently when its inputs are available.
 #### Implement or debug
 
 ```text
+/delivery:delivery-debug Explain the parser failure from the supplied source and stack trace. Read files only. Do not execute commands, edit files, delegate, or create resources.
 /delivery:delivery-implement-change Implement the approved saved-cart task in src/cart/ and its tests. Preserve the agreed API. Exercise the changed behavior and report evidence. Do not commit or push.
 /delivery:delivery-debug Diagnose the checkout failure using the supplied reproduction and logs. Repair only the affected cart code and verify the fix. Do not change accepted behavior or publish.
 ```

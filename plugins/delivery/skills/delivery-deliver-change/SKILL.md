@@ -20,7 +20,7 @@ An open product decision, deferred work, or a dependency that has not reached it
 
 ## Required reading
 
-Read every listed file completely before acting. Recover truncated reads and resolve links from their containing document.
+Read unconditional dependencies before acting and conditional dependencies before the matching operation. Recover truncated reads and resolve links from their containing document.
 
 - Read the [authority principle](../principle-delivery-authority/SKILL.md).
 - Read the [owned writes principle](../principle-delivery-owned-writes/SKILL.md).
@@ -28,7 +28,7 @@ Read every listed file completely before acting. Recover truncated reads and res
 - Read the [trust boundaries principle](../principle-delivery-trust-boundaries/SKILL.md).
 - Read the [project context contract](../delivery-coordinate-work/references/project-context.md).
 - Read [Git safety](references/git-safety.md).
-- Read the [coordination skill](../delivery-coordinate-work/SKILL.md) and [assignment and handoff contract](../delivery-coordinate-work/references/assignment-and-handoff.md).
+- Read the [assignment and handoff contract](../delivery-coordinate-work/references/assignment-and-handoff.md).
 - Read the [implementation skill](../delivery-implement-change/SKILL.md) and [static review skill](../delivery-review-change/SKILL.md).
 
 Read the source criteria, repository instructions, relevant existing code, quality commands, and PR template before implementation. The reviewer loads its own required reading and receives inspection evidence from an authorized owner.
@@ -37,7 +37,7 @@ Read the source criteria, repository instructions, relevant existing code, quali
 
 1. Confirm one accepted source and its requested behavior. Preserve its contracts. Return scope or contract changes to the user before implementing them. Record the requested completion state without treating it as publication authority.
 2. Establish owned paths and the integration owner. Follow Git safety for the workspace and branch. Relay only permissions actually granted to each owner. Keep `COMMIT_MODE: none` when no commit permission exists. The main session may implement only when project role policy permits.
-3. Implement the complete behavior, affected callers, tests, required runtime smoke checks, accessibility obligations, and criterion-linked proof. Use coordination only where ownership or role boundaries require it. Do not invent a release manifest for ordinary implementation.
+3. Implement the complete behavior, affected callers, tests, required runtime smoke checks, accessibility obligations, and criterion-linked proof. Read [coordination](../delivery-coordinate-work/SKILL.md) before dispatch, ownership transfer, or cross-owner integration. Do not invent a release manifest for ordinary implementation.
 4. Stop all writers before final integration checks. Obtain independent static review for code changes and resolve in-scope findings under the project's severity mapping. Keep source labels unchanged. Blocking or unclassified findings prevent readiness.
 5. Run the project's required focused checks and full local quality gates through authorized worker operations. Preserve failed or unverified results. Diagnose failures and use the applicable bounded repair procedure rather than weakening checks or skipping required behavior.
 6. If commit, push, and PR creation are each authorized, apply the canonical Git gates and publish one PR. If authority is absent, stop before that operation and report the completed local work and exact permission needed. Do not erase authorized implementation progress merely because publication is unavailable.

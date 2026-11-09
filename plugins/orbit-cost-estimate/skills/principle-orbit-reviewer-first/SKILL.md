@@ -7,11 +7,13 @@ description: "Use when Orbit writes a stakeholder-facing summary, decision gate,
 
 ## ใช้เมื่อ
 
-ใช้กับทุก action เพื่อให้คนอ่านตัดสินใจได้ก่อนเปิด working tables. อ่าน [Writing style guidance](references/writing-style.md) และรักษา contract tokens เดิม.
+อ่าน [Writing style guidance](references/writing-style.md) เมื่อเขียนหรือแก้ prose ของ Step 00–06. รักษา contract tokens ทุก output.
+
+Workbook และ diagram ใช้ layout/metadata ตาม action contract พร้อม source, approval, findings, verification limits และ handoff. ไม่ใส่ project/client names ในตัว diagram.
 
 ## ลำดับเอกสาร
 
-วางส่วนต่อไปนี้ก่อน `ภาคผนวก`.
+สำหรับ Step 00–06 วางส่วนต่อไปนี้ก่อน `ภาคผนวก`.
 
 1. Step Summary.
 2. สิ่งที่เปลี่ยนจากรอบก่อน.
@@ -38,7 +40,7 @@ Self-check tables สรุป passing checks หนึ่งบรรทัด�
 
 ## Metadata ของ artifact
 
-- Title ระบุ project และ step.
+- Title ของ Step 00–06 ระบุ project และ step.
 - Header ใช้ `Source`, `Version`, `Approval State`, `Approval Basis`.
 - เพิ่ม `Approved Baseline Scope` ตั้งแต่ Step 03.1. ไม่ assign SG ใน Step 00–02.
 - `Source` ระบุ upstream path และ approved revision ข้าง path ไม่แก้ filename เพื่อใส่ revision.
