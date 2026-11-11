@@ -13,7 +13,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parent.parent
 AGENTS = ("claude", "pi")
 RESOURCE_ROOTS = {
-    "skills": ("plugins/orbit-cost-estimate/skills", "plugins/delivery/skills"),
+    "skills": ("plugins/cost-estimate/skills", "plugins/delivery/skills"),
     "commands": ("commands",),
     "agents": ("plugins/delivery/agents",),
 }

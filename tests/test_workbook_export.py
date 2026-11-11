@@ -8,12 +8,12 @@ from openpyxl import load_workbook
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXPORT = ROOT / "plugins/orbit-cost-estimate/skills/orbit-export-workbook/scripts/md_to_workbook.py"
+EXPORT = ROOT / "plugins/cost-estimate/skills/export-workbook/scripts/md_to_workbook.py"
 
 
 class WorkbookExportTests(unittest.TestCase):
     def test_identifiers_survive_integer_config_without_changing_effort(self):
-        with tempfile.TemporaryDirectory(prefix="orbit-export-test-") as directory:
+        with tempfile.TemporaryDirectory(prefix="export-test-") as directory:
             root = Path(directory)
             markdown = root / "source.md"
             config = root / "config.yaml"

@@ -4,7 +4,7 @@
   "private": true,
   "pi": {
     "skills": [
-      "./plugins/orbit-cost-estimate/skills",
+      "./plugins/cost-estimate/skills",
       "./plugins/delivery/skills"
     ],
     "prompts": ["./pi/prompts/*.md"]

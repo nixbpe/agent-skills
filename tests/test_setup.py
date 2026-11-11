@@ -140,7 +140,7 @@ class SetupSafetyTests(unittest.TestCase):
         self.assertEqual(self.snapshot(), before)
         self.run_setup("install")
         sources = {
-            ".claude/skills/orbit-cost-estimate": "plugins/orbit-cost-estimate/skills/orbit-cost-estimate",
+            ".claude/skills/cost-estimate": "plugins/cost-estimate/skills/cost-estimate",
             ".claude/skills/delivery-debug": "plugins/delivery/skills/delivery-debug",
             ".claude/agents/delivery-worker.md": "plugins/delivery/agents/delivery-worker.md",
             ".claude/agents/delivery-reviewer.md": "plugins/delivery/agents/delivery-reviewer.md",
@@ -182,7 +182,7 @@ class SetupSafetyTests(unittest.TestCase):
     def test_duplicate_plugin_skill_name_blocks_update(self):
         self.run_setup("install")
         source = self.repo / "plugins/delivery/skills/delivery-debug"
-        shutil.copytree(source, self.repo / "plugins/orbit-cost-estimate/skills/delivery-debug")
+        shutil.copytree(source, self.repo / "plugins/cost-estimate/skills/delivery-debug")
         before = self.snapshot()
         self.run_setup("install", success=False)
         self.assertEqual(self.snapshot(), before)

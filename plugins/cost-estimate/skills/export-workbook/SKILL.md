@@ -1,0 +1,55 @@
+---
+name: export-workbook
+description: "แปลง estimation_workbook.md ที่ตรวจทานแล้วเป็น Excel ด้วย bundled Python converter พร้อม explicit project config, formula safety, verification และ Not recalculated fallback. ใช้เมื่อขอ continue to xlsx หรือ export workbook หลัง Markdown review gate. ไม่สร้าง estimate ใหม่และไม่คำนวณราคา."
+---
+
+# แปลง Markdown ที่ตรวจทานแล้วเป็น Excel
+
+## ใช้เมื่อ
+
+ผู้ใช้อนุญาตให้สร้าง `.xlsx` จาก workbook Markdown revision ที่ระบุแล้ว เช่น `continue to xlsx` หรือ `generate both` ไม่ใช้ action นี้เพื่อสร้าง source planning artifacts หรือแก้ตัวเลข baseline
+
+## สิ่งที่ต้องเตรียม
+
+- `output/estimation_workbook.md` ที่ผ่าน preparation checks และมี review authorization ของ revision ปัจจุบัน
+- Approved Step 01-06 artifacts ที่ Markdown อ้างอิง หรือ explicit draft authorization พร้อม watermark และรายชื่อ source ที่ยังไม่อนุมัติ
+- Python 3.10 ขึ้นไปและ dependencies ใน [requirements.txt](scripts/requirements.txt)
+- Project config ที่ได้จาก [bundled config](scripts/workbook_config.yaml) พร้อม source-derived phase bands จาก Step 05
+- Excel หรือ LibreOffice ถ้ามี เพื่อ recalculation และตรวจค่าจริง ถ้าไม่มีต้องใช้ fallback ที่ระบุใน contract
+
+ทุก `output/` อยู่ใน working project ส่วน `scripts/` ใน links เป็น bundled assets ของ installed skill อย่าเปลี่ยน working directory ไปที่ skill เพื่อให้ relative CLI default ทำงาน
+
+## กฎที่ต้องอ่าน
+
+ใช้ [วิธีอ่านร่วม](../principle-explicit-approval/SKILL.md#การอ่าน-dependencies) กับ [export runtime contract](references/contract.md), [canonical workbook contract](../prepare-workbook/references/contract.md) และ principles ด้านล่าง.
+
+- [Evidence and traceability](../principle-evidence-and-traceability/SKILL.md)
+- [Explicit approval](../principle-explicit-approval/SKILL.md)
+- [Baseline and scenarios](../principle-baseline-and-scenarios/SKILL.md)
+- [Effort accounting](../principle-effort-accounting/SKILL.md)
+- [Risk and reserve](../principle-risk-and-reserve/SKILL.md)
+- [Reviewer-first](../principle-reviewer-first/SKILL.md)
+- [Planning, not pricing](../principle-planning-not-pricing/SKILL.md)
+- [Verify before publish](../principle-verify-before-publish/SKILL.md)
+
+## ขั้นตอนทำงาน
+
+1. ตรวจ source approval และ authorization ของ Markdown revision นี้ ถ้าขาด Markdown หรือยังมี mandatory gate ที่ไม่ผ่าน ให้หยุดและระบุ prerequisite ไม่สร้าง estimate ทดแทน ถ้ามี decision ที่ต้องเลือก ใช้ ask tool หรือ numbered chat options เมื่อ tool ไม่พร้อม
+2. ตรวจ 10 sheets, table headers, row widths, source rows, A1 formulas และ VAL-01 ถึง VAL-14 ตาม canonical contract อย่าอาศัย `--strict` แทน schema review เพราะมันตรวจเพียง H2 ที่ไม่มี tables รัน [Markdown preflight](references/contract.md#markdown-preflight) ถ้า revision นี้ยังไม่มี report ถ้า preflight พบ Fail ให้หยุดและส่ง finding กลับไป prepare workbook ไม่แก้ Markdown ที่อนุมัติแล้วระหว่าง export
+3. สร้าง `output/workbook_config.yaml` จาก bundled config ใส่ phase bands ที่ตรง approved Step 05 และ Markdown metadata ตรวจช่วงสัปดาห์และสีจริง ห้ามใช้ built-in 48-week example หรือแก้ shared config. ตรวจว่า `defaults.font_name` ซึ่งเริ่มต้นเป็น `Noto Sans Thai` ติดตั้งในเครื่องที่ render และแสดง glyph ไทย/อังกฤษที่ใช้ได้ครบ
+4. Resolve path ของ installed converter แล้วเรียกจาก working project ด้วย `--input`, `--output`, `--config` และ `--strict` ตาม [runtime CLI](references/contract.md#bundled-runtime-and-paths) ต้องส่ง `--config` เสมอเพื่อไม่อ่าน config จาก directory ผิด
+5. ถ้า conversion ล้มเหลว ให้แสดง exit code และ error จริง เก็บ Markdown ไว้ ระบุว่า `.xlsx` เดิมเป็น stale หากมี ห้ามอ้างว่า export สำเร็จจากไฟล์เก่า
+6. เปิด workbook จริงและตรวจภาพใน Excel/LibreOffice หรือ rendered pages หลังปรับ layout ครั้งสุดท้าย ตรวจ sheet order, cell types รวม IDs, phase bands, timeline fills, wrapped headers, clipping และ print headers. Row-height estimate ไม่รับประกันว่า text หรือ Thai glyphs จะแสดงครบ. คง independent semantic source review รวม actor ของแต่ละ operation และ assumption status
+7. Recalculate ด้วย Excel/LibreOffice เมื่อมี ตาม [recalculation command](references/contract.md#recalculation-command) แล้วรัน [verifier CLI](references/contract.md#independent-workbook-verifier) กับ `.xlsx` ที่จะส่งจริงหลัง recalculation ครั้งสุดท้าย. ตรวจ expected/actual/cell evidence และ coverage limitations ของ report. ส่งต่อ Warning/Fail ไปยัง Markdown, validation rows, README และ final handoff ตาม canonical §7
+8. หาก recalculation ไม่พร้อม ให้บันทึก `Not recalculated` พร้อม warnings แล้วรัน verifier กับไฟล์จริงด้วย ห้ามประกาศ formula checks ว่าผ่านเพราะสร้างไฟล์ได้. เมื่อ Markdown/status/config เปลี่ยน ให้ convert ใหม่ แล้ว recalculate, inspect และ verify ไฟล์สุดท้ายอีกครั้ง. ห้ามใช้ report ของไฟล์ก่อนหน้า
+
+## ผลลัพธ์และจุดหยุด
+
+ส่ง `output/estimation_workbook.xlsx`, `output/workbook_verification.json`, path ของ explicit project config และ conversion/verifier provenance พร้อม calculation status, checks ที่ทำจริง, coverage limitations และ warnings ที่มี row/cell evidence จากนั้นหยุดให้ผู้ใช้ review ไม่เรียก action ถัดไปเอง
+
+การ export ไม่แก้ baseline, ไม่เพิ่ม commercial fields และไม่ปลด mandatory quality gates ถ้า source ต้องแก้ ให้ระบุ finding เพื่อกลับไป [prepare workbook](../prepare-workbook/SKILL.md) ไม่แก้เงียบระหว่าง conversion
+
+## ตัวอย่างคำขอ
+
+- "ตรวจ Markdown revision ที่อนุมัติแล้วและ continue to xlsx ใช้ phase bands จาก Step 05"
+- "Export workbook นี้ ถ้าไม่มี LibreOffice ให้ระบุ Not recalculated และตรวจ totals แยก"

@@ -1,11 +1,11 @@
 {
   "name": "nixbpe-agent-skills",
   "owner": { "name": "nixbpe" },
-  "description": "Personal Orbit estimation and software delivery plugins.",
+  "description": "Personal estimation and software delivery plugins.",
   "plugins": [
     {
-      "name": "orbit-cost-estimate",
-      "source": "./plugins/orbit-cost-estimate"
+      "name": "cost-estimate",
+      "source": "./plugins/cost-estimate"
     },
     {
       "name": "delivery",

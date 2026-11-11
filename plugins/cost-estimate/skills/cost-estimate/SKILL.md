@@ -1,0 +1,90 @@
+---
+name: cost-estimate
+description: "Plan software delivery from TOR/RFP through scope, architecture, effort, resources and risk. Use for ประเมินโครงการ, continue estimation, or selecting a planning action. Excludes costing and pricing."
+---
+
+# Cost estimate
+
+ชุดนี้ช่วยทีม pre-sales และ delivery วาง planning baseline จาก TOR/RFP. ประเมิน scope, effort, duration, resources และ risk. ไม่คำนวณราคาหรือต้นทุนทางการเงิน.
+
+ใช้ skill นี้เมื่อยังไม่แน่ใจว่าจะเริ่ม action ไหน หรือต้องการเดินหลายขั้นต่อกัน. ถ้ารู้สิ่งที่ต้องทำและมี approved inputs แล้ว ให้เรียก action นั้นโดยตรงได้.
+
+ถ้าถามเพียงชื่อ skill ให้ตอบจากตารางเลือก action และหยุด ไม่ตรวจ readiness หรือเริ่มงาน.
+
+## เริ่มอ่านตรงไหน
+
+1. เลือกงานจากตาราง actions ด้านล่าง.
+2. เปิด `SKILL.md` ของ action นั้นเพื่อดู input, ขั้นตอนและ output.
+3. เมื่อเริ่มงาน ให้ใช้ dependencies และวิธีอ่านที่ action ระบุ.
+
+ทุก action อยู่ระดับเดียวกันในชุด skills. ลิงก์ในเอกสารอ้างจากตำแหน่ง skill ที่ติดตั้ง. Paths ใต้ `output/` หมายถึง working project ของผู้ใช้ ไม่ใช่ directory ของ skill.
+
+## เลือก action
+
+| ต้องการทำอะไร | Action | Input ที่ต้องมี | Output หลัก |
+|---|---|---|---|
+| ตรวจ TOR และข้อที่ต้องถาม | [analyze-tor](../analyze-tor/SKILL.md) | TOR/RFP, requirement notes หรือ customer brief | `output/step_00_confirmation_baseline.md` |
+| กำหนด scope และข้อจำกัด | [define-scope](../define-scope/SKILL.md) | Approved Step 00 และ source evidence | `output/step_01_intake_scope.md` |
+| เสนอ architecture และ integrations | [design-architecture](../design-architecture/SKILL.md) | Approved Step 01 พร้อม Step 00 | `output/step_02_architecture_constraints.md` |
+| แตก functional features | [inventory-features](../inventory-features/SKILL.md) | Approved scope และ architecture | `output/step_03_01_feature_inventory.md` |
+| สร้าง backlog และ inventory | [build-backlog](../build-backlog/SKILL.md) | Approved feature inventory | `output/step_03_02_backlog_inventory.md` |
+| แตก work packages และ owners | [build-wbs](../build-wbs/SKILL.md) | Approved backlog พร้อม supporting evidence | `output/step_03_03_wbs_baseline.md` |
+| ประเมิน Raw MD | [size-effort](../size-effort/SKILL.md) | Approved WBS และ feature/backlog detail | `output/step_04_sizing_estimate.md` และ `output/step_04_sizing_review.md` |
+| วางทีมและ delivery schedule | [plan-resources](../plan-resources/SKILL.md) | Approved Step 04 ทั้งสองไฟล์และ WBS/dependencies | `output/step_05_resource_plan.md` |
+| สรุป risk และ planning baseline | [assess-risk](../assess-risk/SKILL.md) | Approved Step 05 และ upstream evidence | `output/step_06_risk_contingency.md` |
+| เตรียม workbook ให้คนตรวจ | [prepare-workbook](../prepare-workbook/SKILL.md) | Approved Step 01–06 หรือ explicit draft-export authorization | `output/estimation_workbook.md` |
+| แปลง workbook เป็น Excel | [export-workbook](../export-workbook/SKILL.md) | Workbook Markdown และ authorization ให้ export | `output/estimation_workbook.xlsx` |
+| วาดภาพ architecture | [draw-architecture](../draw-architecture/SKILL.md) | Approved architecture artifact | SVG และ PNG ตาม diagram contract |
+
+## Workflow และจุดหยุด
+
+Planning pipeline เดินตามลำดับ Step 00, 01, 02, 03.1, 03.2, 03.3, 04, 05 และ 06. แต่ละขั้นมี review gate ของตัวเอง. Step 06 เป็นขั้นสุดท้ายของ planning.
+
+Workbook เป็น reporting workflow แยก. เตรียม Markdown ก่อน แล้วรอ review/authorization ก่อน XLSX เว้นแต่มี `generate both` แล้ว. Diagram ทำได้เมื่อ architecture พร้อม ไม่ต้องรอ sizing หรือ risk.
+
+1. ระบุ action ที่ต้องการ. สำหรับ `continue` ให้อ่าน [วิธีอ่านร่วม](../principle-explicit-approval/SKILL.md#การอ่าน-dependencies) ก่อนตรวจ artifacts เพื่อเลือกขั้นถัดไป.
+2. โหลด dependencies และตรวจ prerequisites ตาม action ที่เลือก. การมีไฟล์ไม่ใช่ approval.
+3. ให้ action ผลิตเฉพาะ output ของตัวเองและตรวจ mandatory gates. เมื่อ action ส่งกลับ router จะตัดสินใจว่าจะหยุดหรือไปขั้นถัดไปตาม authorization.
+4. ถ้าไม่ได้รับ `run all steps continuously` ให้หยุดที่ review gate. หากได้รับ ให้เดินต่อได้เฉพาะเมื่อ quality gates ผ่านและบันทึก Approval Basis/assumptions/defaults แล้ว. ไม่ถือเป็น client หรือ contractual sign-off.
+5. เมื่อจบ ให้บอก output paths, revision/approval state, remaining blockers และ action ถัดไปที่เป็นไปได้. ไม่เขียน headline numbers ซ้ำจาก artifact.
+
+## ข้อมูลที่แต่ละขั้นเป็นเจ้าของ
+
+| ข้อมูล | เจ้าของ |
+|---|---|
+| Source clarity, confirmed facts และ initial integration IDs | Step 00 |
+| Business scope และ constraints | Step 01 |
+| Architecture, surfaces และ technical implications | Step 02 |
+| Functional outcomes, atomic subfeatures และ Approved Baseline Scope | Step 03.1 |
+| Backlog, physical screens, APIs และ inventory counts | Step 03.2 |
+| Work packages, owners และ dependencies | Step 03.3 |
+| Raw MD และ sizing review | Step 04 |
+| Adjusted MD, PM, staffing, duration และ warranty schedule | Step 05 |
+| Selected commitment, contingency, reserve และ final snapshot | Step 06 |
+
+ปลายทางอ้างข้อมูลต้นทางด้วย ID และ revision. ห้ามให้ workbook หรือ Step 06 แก้ Raw MD เงียบ ๆ. เมื่อ upstream เปลี่ยน ต้องตรวจ affected downstream views และขอ approval ของ revision ใหม่.
+
+สำหรับ `revise` หรือ `re-baseline` ที่กระทบหลาย step ให้ทำตาม [ขั้นตอนเมื่อ baseline เปลี่ยน](../principle-baseline-and-scenarios/SKILL.md#เมื่อ-baseline-เปลี่ยน): แสดง impact table ก่อนเริ่ม, เก็บ revision เดิม, แก้ตามลำดับ step แล้วทำ stale sweep.
+
+## ตัวอย่างคำขอ
+
+- "ใช้ cost-estimate วิเคราะห์ TOR ใน docs/requirements.pdf แล้วหยุดที่ Step 00 ให้ตรวจ."
+- "ใช้ size-effort จาก approved artifacts ใน output/ สร้าง Estimate และ Review เป็นคู่."
+- "ใช้ plan-resources จาก Step 04 revision ที่อนุมัติแล้ว อย่าเปลี่ยน Raw MD."
+- "ใช้ prepare-workbook จาก approved baseline แล้วหยุดให้ตรวจ Markdown."
+- "ใช้ export-workbook แปลง output/estimation_workbook.md และรายงานสถานะ recalculation."
+- "ใช้ draw-architecture จาก output/step_02_architecture_constraints.md."
+
+ใน Claude plugin เรียก `/cost-estimate:cost-estimate` หรือ `/cost-estimate:<action-name>`. เมื่อติดตั้งตรงใน Claude Code เรียก `/cost-estimate` หรือ `/<action-name>`. ใน pi เรียก `/skill:cost-estimate` หรือ `/skill:<action-name>`.
+
+## ขอบเขตการติดตั้งและเครื่องมือ
+
+ติดตั้ง suite ทั้ง 21 skills ไว้ระดับเดียวกัน. การเรียก action แยกกันไม่ได้หมายถึงการคัดลอก `SKILL.md` ไฟล์เดียวโดยไม่เอา dependencies ไปด้วย. อ่าน [Agent Skills format](https://agentskills.io/specification) สำหรับโครงสร้างมาตรฐาน.
+
+Core planning ใช้การอ่านและเขียน artifacts. Non-text TOR อาจต้อง Docling ตาม input contract. XLSX ต้องใช้ Python และ dependencies ที่ export skill ระบุ. Diagram ต้องใช้ renderer และ PNG tooling ตาม contract. ถ้าเครื่องมือไม่พร้อม ให้รายงาน blocker หรือ fallback ที่ contract อนุญาต ห้ามอ้างว่างานครบ.
+
+หาก asking tool ไม่มี ให้ถามเป็นข้อความพร้อมตัวเลือก. ไม่บังคับชื่อ tool, model หรือ subagent ของ vendor ใด. งานที่ต้องลำดับ approval ให้ทำตาม artifact dependency แม้ agent จะรองรับ parallel execution.
+
+## สำหรับผู้ดูแลชุด skills
+
+แก้กฎร่วมที่ principle เจ้าของ. แก้ schema, สูตรเฉพาะขั้น และ template ที่ action contract เจ้าของ. เก็บชื่อ artifacts, headings, IDs และ status words ที่ downstream อ้างอิงไว้.

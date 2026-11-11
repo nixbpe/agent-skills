@@ -12,7 +12,7 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parent.parent
-VERIFIER = ROOT / "plugins/orbit-cost-estimate/skills/orbit-export-workbook/scripts/verify_workbook.py"
+VERIFIER = ROOT / "plugins/cost-estimate/skills/export-workbook/scripts/verify_workbook.py"
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 
 
@@ -176,7 +176,7 @@ class WorkbookFixture:
 
 class WorkbookVerificationTests(unittest.TestCase):
     def setUp(self):
-        self.directory = tempfile.TemporaryDirectory(prefix="orbit-verification-test-")
+        self.directory = tempfile.TemporaryDirectory(prefix="verification-test-")
         self.addCleanup(self.directory.cleanup)
         self.fixture = WorkbookFixture(Path(self.directory.name))
 

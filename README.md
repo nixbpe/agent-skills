@@ -4,7 +4,7 @@ Reusable skills for Claude Code and pi.
 
 | Suite | Use it for |
 |---|---|
-| [orbit-cost-estimate](#orbit-planning-skills) | Scope, effort, staffing, schedule, risk, and estimation workbooks. Does not calculate prices |
+| [cost-estimate](#planning-skills) | Scope, effort, staffing, schedule, risk, and estimation workbooks. Does not calculate prices |
 | [delivery](#software-delivery-skills) | Define, design, implement, debug, review, and qualify software changes |
 
 ## Install
@@ -18,7 +18,7 @@ Run in your terminal. Install either plugin or both:
 
 ```sh
 claude plugin marketplace add nixbpe/agent-skills
-claude plugin install orbit-cost-estimate@nixbpe-agent-skills
+claude plugin install cost-estimate@nixbpe-agent-skills
 claude plugin install delivery@nixbpe-agent-skills
 claude plugin list
 ```
@@ -80,7 +80,7 @@ your actual inputs and accepted scope.
 
 | Installation | Invocation |
 |---|---|
-| Claude plugin | `/orbit-cost-estimate:<skill-name>` or `/delivery:<skill-name>` |
+| Claude plugin | `/cost-estimate:<skill-name>` or `/delivery:<skill-name>` |
 | Direct Claude | `/<skill-name>` |
 | pi | `/skill:<skill-name>` |
 
@@ -94,14 +94,14 @@ For example, the same debugging request in each installation:
 
 Choose one invocation, not all three. The examples below use Claude plugins.
 
-### Orbit planning skills
+### Planning skills
 
-Use the [Orbit guide](plugins/orbit-cost-estimate/skills/orbit-cost-estimate/SKILL.md)
+Use the [cost-estimate guide](plugins/cost-estimate/skills/cost-estimate/SKILL.md)
 when starting an estimate or deciding the next step:
 
 ```text
-/orbit-cost-estimate:orbit-cost-estimate Which skill draws an approved architecture? Recommend the skill only. Do not inspect project inputs or start work.
-/orbit-cost-estimate:orbit-cost-estimate Analyze docs/requirements.pdf and stop after Step 00 for review. Ask about unresolved scope before proceeding.
+/cost-estimate:cost-estimate Which skill draws an approved architecture? Recommend the skill only. Do not inspect project inputs or start work.
+/cost-estimate:cost-estimate Analyze docs/requirements.pdf and stop after Step 00 for review. Ask about unresolved scope before proceeding.
 ```
 
 Run individual actions when their approved inputs are available. These are
@@ -110,33 +110,33 @@ separate requests, not a batch to execute without review.
 #### Analyze requirements and define scope
 
 ```text
-/orbit-cost-estimate:orbit-analyze-tor Analyze docs/requirements.pdf. Produce Step 00 with unclear requirements and questions for the customer.
-/orbit-cost-estimate:orbit-define-scope Use approved Step 00 in output/ to produce Step 01. Separate confirmed scope, pending decisions, and exclusions.
-/orbit-cost-estimate:orbit-design-architecture Use approved Step 01 in output/ to produce Step 02. Compare architecture options against integrations and NFRs. Do not assume a cloud provider.
+/cost-estimate:analyze-tor Analyze docs/requirements.pdf. Produce Step 00 with unclear requirements and questions for the customer.
+/cost-estimate:define-scope Use approved Step 00 in output/ to produce Step 01. Separate confirmed scope, pending decisions, and exclusions.
+/cost-estimate:design-architecture Use approved Step 01 in output/ to produce Step 02. Compare architecture options against integrations and NFRs. Do not assume a cloud provider.
 ```
 
 #### Break down the work
 
 ```text
-/orbit-cost-estimate:orbit-inventory-features Use approved Steps 01 and 02 in output/ to produce Step 03.1. Break features into units that can be estimated.
-/orbit-cost-estimate:orbit-build-backlog Use approved Step 03.1 in output/ to produce Step 03.2 with backlog and UI/API inventory. Identify shared APIs.
-/orbit-cost-estimate:orbit-build-wbs Use approved Step 03.2 in output/ to produce Step 03.3. Separate shared work and specialist owners. Do not estimate effort yet.
+/cost-estimate:inventory-features Use approved Steps 01 and 02 in output/ to produce Step 03.1. Break features into units that can be estimated.
+/cost-estimate:build-backlog Use approved Step 03.1 in output/ to produce Step 03.2 with backlog and UI/API inventory. Identify shared APIs.
+/cost-estimate:build-wbs Use approved Step 03.2 in output/ to produce Step 03.3. Separate shared work and specialist owners. Do not estimate effort yet.
 ```
 
 #### Estimate effort, staffing, and risk
 
 ```text
-/orbit-cost-estimate:orbit-size-effort Use approved Step 03 artifacts in output/ to produce Step 04 Estimate and Review. Estimate Raw MD and list warranty separately. Stop before staffing.
-/orbit-cost-estimate:orbit-plan-resources Use the approved Step 04 revision in output/ to produce Step 05 staffing and weekly schedule. Preserve Raw MD and separate warranty.
-/orbit-cost-estimate:orbit-assess-risk Use approved Step 05 in output/ to produce Step 06. Assess external risks and separate P75 contingency from management reserve. Do not change Raw MD or Adjusted MD.
+/cost-estimate:size-effort Use approved Step 03 artifacts in output/ to produce Step 04 Estimate and Review. Estimate Raw MD and list warranty separately. Stop before staffing.
+/cost-estimate:plan-resources Use the approved Step 04 revision in output/ to produce Step 05 staffing and weekly schedule. Preserve Raw MD and separate warranty.
+/cost-estimate:assess-risk Use approved Step 05 in output/ to produce Step 06. Assess external risks and separate P75 contingency from management reserve. Do not change Raw MD or Adjusted MD.
 ```
 
 #### Export a workbook or draw architecture
 
 ```text
-/orbit-cost-estimate:orbit-prepare-workbook Prepare output/estimation_workbook.md from approved Steps 01-06. Keep scenarios separate from the baseline. Stop for Markdown review before XLSX export.
-/orbit-cost-estimate:orbit-export-workbook Export the approved output/estimation_workbook.md revision to XLSX using output/workbook_config.yaml and phase bands from Step 05. Verify totals and report Not recalculated if recalculation is unavailable.
-/orbit-cost-estimate:orbit-draw-architecture Draw SVG and PNG from approved Step 02 in output/. Use its hosting model and distinguish future scenarios from the baseline.
+/cost-estimate:prepare-workbook Prepare output/estimation_workbook.md from approved Steps 01-06. Keep scenarios separate from the baseline. Stop for Markdown review before XLSX export.
+/cost-estimate:export-workbook Export the approved output/estimation_workbook.md revision to XLSX using output/workbook_config.yaml and phase bands from Step 05. Verify totals and report Not recalculated if recalculation is unavailable.
+/cost-estimate:draw-architecture Draw SVG and PNG from approved Step 02 in output/. Use its hosting model and distinguish future scenarios from the baseline.
 ```
 
 Approve the specific workbook Markdown revision before requesting export.
@@ -222,12 +222,12 @@ Install extra tools only for the actions you use.
 | Task | Requirements |
 |---|---|
 | Non-text TOR input | Docling conversion as required by the analysis skill |
-| XLSX export | Python 3.10+ and the bundled [requirements.txt](plugins/orbit-cost-estimate/skills/orbit-export-workbook/scripts/requirements.txt) |
+| XLSX export | Python 3.10+ and the bundled [requirements.txt](plugins/cost-estimate/skills/export-workbook/scripts/requirements.txt) |
 | Workbook recalculation | Excel or LibreOffice. Otherwise report `Not recalculated` |
 | Thai workbook layout | Noto Sans Thai or a configured Thai-capable font. Inspect the rendered workbook |
 | Architecture drawings | SVG renderer and viewer, plus `rsvg-convert` for PNG export |
 
-See the [workbook export guide](plugins/orbit-cost-estimate/skills/orbit-export-workbook/SKILL.md)
+See the [workbook export guide](plugins/cost-estimate/skills/export-workbook/SKILL.md)
 for configuration and verification. Export alone does not prove formula
 recalculation or approval of the source estimate.
 
@@ -239,14 +239,14 @@ Update only installed plugins, then start a new session:
 
 ```sh
 claude plugin marketplace update nixbpe-agent-skills
-claude plugin update orbit-cost-estimate@nixbpe-agent-skills
+claude plugin update cost-estimate@nixbpe-agent-skills
 claude plugin update delivery@nixbpe-agent-skills
 ```
 
 To remove either plugin:
 
 ```sh
-claude plugin uninstall orbit-cost-estimate@nixbpe-agent-skills
+claude plugin uninstall cost-estimate@nixbpe-agent-skills
 claude plugin uninstall delivery@nixbpe-agent-skills
 ```
 
