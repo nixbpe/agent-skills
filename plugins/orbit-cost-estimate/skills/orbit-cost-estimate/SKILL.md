@@ -64,6 +64,8 @@ Workbook เป็น reporting workflow แยก. เตรียม Markdown 
 
 ปลายทางอ้างข้อมูลต้นทางด้วย ID และ revision. ห้ามให้ workbook หรือ Step 06 แก้ Raw MD เงียบ ๆ. เมื่อ upstream เปลี่ยน ต้องตรวจ affected downstream views และขอ approval ของ revision ใหม่.
 
+สำหรับ `revise` หรือ `re-baseline` ที่กระทบหลาย step ให้ทำตาม [ขั้นตอนเมื่อ baseline เปลี่ยน](../principle-orbit-baseline-and-scenarios/SKILL.md#เมื่อ-baseline-เปลี่ยน): แสดง impact table ก่อนเริ่ม, เก็บ revision เดิม, แก้ตามลำดับ step แล้วทำ stale sweep.
+
 ## ตัวอย่างคำขอ
 
 - "ใช้ orbit-cost-estimate วิเคราะห์ TOR ใน docs/requirements.pdf แล้วหยุดที่ Step 00 ให้ตรวจ."

@@ -47,7 +47,7 @@ description: "Use when an Orbit action checks prerequisites, asks stakeholder de
 
 ## เมื่อจบ action
 
-เผยแพร่ Post-step Review Gate หลังตรวจคุณภาพ. แสดงผลลัพธ์สำคัญโดยไม่เขียนตัวเลขซ้ำ, unresolved decisions และ baseline impacts. ใช้ action ตาม contract เช่น `approve Step 04` หรือ `revise Step 04: ...` พร้อม `stop`. เสนอ continuous mode เมื่อยังมีขั้นถัดไปใน workflow. Step 06 เป็น terminal step.
+เผยแพร่ Post-step Review Gate หลังตรวจคุณภาพและ [self-review](../principle-orbit-verify-before-publish/SKILL.md#self-review-ก่อน-review-gate) ไม่เกิน 3 รอบ. รายงานจำนวนรอบและสิ่งที่แก้ใน gate. แสดงผลลัพธ์สำคัญโดยไม่เขียนตัวเลขซ้ำ, unresolved decisions และ baseline impacts. ใช้ action ตาม contract เช่น `approve Step 04` หรือ `revise Step 04: ...` พร้อม `stop`. เสนอ continuous mode เมื่อยังมีขั้นถัดไปใน workflow. Step 06 เป็น terminal step.
 
 Gate approval ไม่ยกเลิก failed mandatory checks, scenario isolation, arithmetic หรือ verification limitations. เมื่อผู้ใช้สั่ง action เดียว ให้ส่งผลและหยุด. Skill หลักเลือกขั้นถัดไปได้ตาม authorization ที่มี แต่ action ไม่เรียกขั้นถัดไปเอง.
 

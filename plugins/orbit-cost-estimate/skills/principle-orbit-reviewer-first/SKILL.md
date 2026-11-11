@@ -53,4 +53,6 @@ Self-check tables สรุป passing checks หนึ่งบรรทัด�
 
 เมื่อ source, project context หรือผู้ใช้เป็นภาษาไทย ให้ stakeholder-facing prose เป็นภาษาไทย. คง technical terms, identifiers, headings, formulas และ status words ตาม contract. ใช้ business names ใน executive prose และเก็บ IDs ไว้เมื่อจำเป็นต่อ traceability.
 
+ส่วนเหนือ `ภาคผนวก` คือ Step Summary, สิ่งที่เปลี่ยน, Open decisions, Warning/Fail findings, canonical numeric block และ Review Gate. ในส่วนนี้เขียนชื่อทางธุรกิจก่อน. ใส่ ID ได้ 2 กรณี: contract บังคับ token นั้น หรือผู้อ่านต้องใช้ ID ค้นแถวในภาคผนวก. วาง ID ต่อท้ายชื่อ เช่น `ระบบยืนยันตัวตนขององค์กร (INT-03)` ไม่ใช้ ID แทนชื่อ และไม่อ้าง ID เป็นช่วงยาวในประโยค. คอลัมน์คำอธิบาย เช่น Mitigation และ Notes ใช้กฎเดียวกัน. ตาราง traceability ในภาคผนวกคง ID ครบตาม contract.
+
 Step 00–05 ส่ง Full Template + Step Summary + Handoff Note เว้นแต่ผู้ใช้เลือก depth อื่นชัดเจน. Step 06 ส่ง Full Template + Step Summary + Final Planning Baseline Snapshot. การย่อ prose ไม่ยกเลิก mandatory evidence หรือ checks.

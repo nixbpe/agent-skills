@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""Read-only numeric and transfer verification of one delivered Orbit workbook."""
+"""Read-only verification of one Orbit workbook.
+
+Default mode compares the reviewed Markdown with the delivered XLSX.
+`--markdown-only` checks the Markdown alone before the review gate.
+"""
 from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
+import difflib
 import hashlib
 import json
 from pathlib import Path
@@ -31,6 +36,39 @@ LIMITATIONS = [
     "Configured sheet/table presence is checked; this is not a complete canonical schema or visual-layout audit.",
     "Risk probability/impact derivation, recommended-contingency components, warranty schedule capacity and qualitative VAL rules require separate review.",
 ]
+
+PREFLIGHT_LIMITATIONS = [
+    "Markdown-only: no XLSX, formula result or cached value is read. Run the workbook verifier after export.",
+    "Required rows, row widths, registry tables, formula-like literals and literal Warning/Fail disclosure only.",
+    "Check cells written as formulas are deferred until recalculation; a clean preflight does not predict their result.",
+    "No numeric reconciliation, A1 address resolution, semantic source review or visual-layout audit.",
+]
+SUMMARY_METADATA = {"Bucket", "Bucket Total", "% of Raw Grand Total",
+                    "QA vs FE+BE Check", "Bucket Sum Check"}
+RANGE_ROWS = ["Adjusted MD", "Recommended Contingency MD", "Selected Commitment Uplift",
+              "Contingency MD", "Delivery Baseline", "Management Reserve", "Planning Total",
+              "P25", "P50", "P75", "P90"]
+# Labels the canonical contract requires and the workbook verifier looks up by exact text.
+REQUIRED_ROWS = {
+    "tbl_readme_control": ("Field", [
+        "Workbook Name", "Project Name", "Version", "Generated Date", "Source Artifacts",
+        "Approved Baseline Scope", "Approval State", "Approval Basis", "No-Pricing Rule",
+        "Raw MD", "Adjusted MD", "Delivery Baseline", "Management Reserve", "Planning Total",
+        "P25", "P50", "P75", "P90", "Confidence", "Integration Count", "External Risk Count",
+        "Top Risks", "Re-estimation Triggers", "Baseline-vs-Scenario Note", "Validation Summary",
+        "Calculation Status", "Working Days per Week", "Focus Factor", "Delivery Weeks",
+        "PM Base MD", "Recommended Contingency MD", "Selected Commitment Uplift",
+        "Contingency MD", "Selected Delivery Basis", "Reserve Rate", "Reserve Denominator"]),
+    "tbl_sizing_summary": ("Bucket", ["SG1 Features", "SG2 Features", "Integration", "Non-Dev",
+                                      "Raw Grand Total"]),
+    "tbl_range_reserve": ("Category / Scenario", RANGE_ROWS),
+    "tbl_final_snapshot": ("Field", RANGE_ROWS + ["Selected Delivery Basis", "Top Risks",
+                                                  "Confidence", "Re-estimation Triggers"]),
+}
+ROLE_CONTROLS = ("Raw MD", "Rework Rate", "Buffer Rate", "Adjusted MD",
+                 "Warranty Adjusted MD", "Delivery Adjusted MD")
+KEY_COLUMNS = ("Subfeature ID", "ID", "INT ID", "ND ID", "#", "Bucket", "Field",
+               "Category / Scenario", "Role")
 
 
 def number(value: Any) -> Decimal | None:
@@ -160,11 +198,7 @@ def raw_widths(path, verification):
     return not verification.findings
 
 
-def bind_tables(sections, cfg, formulas, cached, v):
-    registry = cfg.get("sheets", []) or []
-    expected_sheets = [_safe_sheet_name(_short_sheet_name(s.heading, registry)) for s in sections]
-    v.add("STRUCTURE/sheet-order", "Pass" if expected_sheets == formulas.sheetnames else "Fail",
-          expected_sheets, formulas.sheetnames)
+def check_registry(sections, registry, v):
     for entry in registry:
         matching = [s for s in sections if entry.get("heading", "") and entry["heading"] in s.heading]
         if len(matching) != 1:
@@ -174,6 +208,45 @@ def bind_tables(sections, cfg, formulas, cached, v):
                  for i, t in enumerate(matching[0].tables)]
         required = [t["name"] for t in entry.get("tables", [])]
         v.add(f"STRUCTURE/tables/{entry['heading']}", "Pass" if names == required else "Fail", required, names)
+
+
+def key_column(header):
+    return next((h for h in KEY_COLUMNS if h in header), header[0])
+
+
+def bind_source(sections, registry, v):
+    """Bind Markdown rows without a workbook; only literal cells carry a value."""
+    for section in sections:
+        sheet_name = _safe_sheet_name(_short_sheet_name(section.heading, registry))
+        if not section.tables:
+            v.add(f"STRUCTURE/empty/{sheet_name}", "Fail", "at least one table", 0)
+        for i, table in enumerate(section.tables):
+            name = table.table_name or _table_name_from_config(section.heading, i, registry)
+            name = name or f"{sheet_name}/table-{i + 1}"
+            if name in v.tables:
+                v.add(f"STRUCTURE/duplicate/{name}", "Fail", "unique table", name)
+                continue
+            if len(set(table.header)) != len(table.header):
+                v.add(f"STRUCTURE/columns/{name}", "Fail", "unique headers", table.header)
+                continue
+            key = key_column(table.header)
+            rows = []
+            for offset, source in enumerate(table.rows, 1):
+                row_key = source[table.header.index(key)]
+                rows.append({
+                    header: Cell(name, row_key, header, f"markdown:{name}/row {offset}/{header}", text, None,
+                                 None if text.startswith("`=") else text,
+                                 "f" if text.startswith("`=") else "s")
+                    for header, text in zip(table.header, source)})
+            v.tables[name] = BoundTable(table, rows)
+
+
+def bind_tables(sections, cfg, formulas, cached, v):
+    registry = cfg.get("sheets", []) or []
+    expected_sheets = [_safe_sheet_name(_short_sheet_name(s.heading, registry)) for s in sections]
+    v.add("STRUCTURE/sheet-order", "Pass" if expected_sheets == formulas.sheetnames else "Fail",
+          expected_sheets, formulas.sheetnames)
+    check_registry(sections, registry, v)
     for section, sheet_name in zip(sections, expected_sheets):
         if sheet_name not in formulas:
             continue
@@ -201,8 +274,7 @@ def bind_tables(sections, cfg, formulas, cached, v):
             rows = []
             for offset, source in enumerate(table.rows, 1):
                 row = {}
-                key_column = next((h for h in ("Subfeature ID", "ID", "INT ID", "ND ID", "#", "Bucket", "Field", "Category / Scenario", "Role") if h in table.header), table.header[0])
-                row_key = source[table.header.index(key_column)]
+                row_key = source[table.header.index(key_column(table.header))]
                 for col, (header, text) in enumerate(zip(table.header, source), 1):
                     observed = ws.cell(header_row + offset, col)
                     cell = Cell(name, row_key, header, f"'{sheet_name}'!{observed.coordinate}",
@@ -252,9 +324,7 @@ def verify_sizing(v, controls):
     if not summary or "Bucket" not in summary.source.header or "Bucket Total" not in summary.source.header:
         v.add("VAL-01/inputs", "Warning", "canonical sizing summary", None)
         return {}
-    summary_metadata = {"Bucket", "Bucket Total", "% of Raw Grand Total",
-                        "QA vs FE+BE Check", "Bucket Sum Check"}
-    roles = [header for header in summary.source.header if header not in summary_metadata]
+    roles = [header for header in summary.source.header if header not in SUMMARY_METADATA]
     bucket_names = ("SG1 Features", "SG2 Features", "Integration", "Non-Dev")
     sums = {bucket: {role: [] for role in roles} for bucket in bucket_names}
     groups = v.index("tbl_feature_inventory", "Subfeature ID", "SG")
@@ -455,46 +525,62 @@ def verify_capacity(v, controls, raw):
         v.compare("VAL-05/Allocation Average FTE", allocation / horizon if allocation is not None and horizon else None, controls["Allocation Average FTE"])
 
 
-def verify_disclosure(v, controls):
-    summary = v.tables.get("tbl_validation_summary")
+def row_checks(v):
+    """Record every Warning/Fail check cell; return how many check cells are formulas."""
+    formulas = 0
     for name, table in v.tables.items():
         for row in table.rows:
             for header, cell in row.items():
                 check = header.endswith(" Check") or (name == "tbl_validation_summary" and header == "Result")
                 check = check or (name == "tbl_readme_control" and header == "Value" and row.get("Field") and row["Field"].source.endswith(" Check"))
-                if check and cell.cached in ("Warning", "Fail"):
+                if not check:
+                    continue
+                formulas += cell.source.startswith("`=")
+                if cell.cached in ("Warning", "Fail"):
                     rationale = " ".join(str(row[h].cached or "") for h in ("Note", "Notes", "Rationale") if h in row)
                     v.add(f"ROW-CHECK/{name}/{cell.row}/{header}", cell.cached, "Pass or disclosed unresolved finding", cell.cached, [cell], rationale)
+    return formulas
+
+
+def is_disclosed(key, finding, disclosures):
+    refs = [e.get("cell") for e in finding["evidence"] if e.get("cell")]
+    rows = [e.get("row") for e in finding["evidence"] if isinstance(e.get("row"), str) and e["row"]]
+    owner = key.split("/", 1)[0]
+    if owner in ("FORMULA-CACHE", "FORMULA-ERROR", "TRANSFER"):
+        owner = "VAL-14"
+    elif owner == "ROW-CHECK":
+        owner = {
+            "QA vs FE+BE Check": "VAL-03", "Bucket Sum Check": "VAL-02",
+            "Range Formula Check": "VAL-08", "Reserve Separation Check": "VAL-07",
+            "INT Coverage Check": "VAL-09", "WBS Coverage Check": "VAL-13",
+        }.get(key.rsplit("/", 1)[-1], owner)
+    for row in disclosures:
+        if re.fullmatch(r"VAL-\d{2}", owner):
+            check_id = row.get("Check ID")
+            if not check_id or check_id.cached != owner:
+                continue
+        note = str(row["Note"].cached or "") if "Note" in row else ""
+        status = row["Result"].cached if "Result" in row else None
+        identity = key in note or any(ref in note for ref in refs) or any(re.search(r"(?<![\w.-])" + re.escape(label) + r"(?![\w.-])", note) for label in rows)
+        rationale = re.search(r"(?:rationale|action)\s*=\s*([^;\n]+)", note, re.IGNORECASE)
+        if identity and rationale and SEVERITY.get(status, -1) >= SEVERITY[finding["result"]]:
+            return True
+    return False
+
+
+DISCLOSURE_RULE = "README validation row with identifier/cell, unresolved severity and rationale/action"
+
+
+def verify_disclosure(v, controls):
+    summary = v.tables.get("tbl_validation_summary")
+    row_checks(v)
     unresolved = [(key, finding) for key, finding in v.findings.items() if finding["result"] != "Pass"]
     disclosures = summary.rows if summary else []
     for key, finding in unresolved:
         if key.startswith("ROW-CHECK/tbl_validation_summary/"):
             continue
-        refs = [e.get("cell") for e in finding["evidence"] if e.get("cell")]
-        rows = [e.get("row") for e in finding["evidence"] if isinstance(e.get("row"), str) and e["row"]]
-        disclosed = False
-        owner = key.split("/", 1)[0]
-        if owner in ("FORMULA-CACHE", "FORMULA-ERROR", "TRANSFER"):
-            owner = "VAL-14"
-        elif owner == "ROW-CHECK":
-            owner = {
-                "QA vs FE+BE Check": "VAL-03", "Bucket Sum Check": "VAL-02",
-                "Range Formula Check": "VAL-08", "Reserve Separation Check": "VAL-07",
-                "INT Coverage Check": "VAL-09", "WBS Coverage Check": "VAL-13",
-            }.get(key.rsplit("/", 1)[-1], owner)
-        for row in disclosures:
-            if re.fullmatch(r"VAL-\d{2}", owner):
-                check_id = row.get("Check ID")
-                if not check_id or check_id.cached != owner:
-                    continue
-            note = str(row["Note"].cached or "") if "Note" in row else ""
-            status = row["Result"].cached if "Result" in row else None
-            identity = key in note or any(ref in note for ref in refs) or any(re.search(r"(?<![\w.-])" + re.escape(label) + r"(?![\w.-])", note) for label in rows)
-            rationale = re.search(r"(?:rationale|action)\s*=\s*([^;\n]+)", note, re.IGNORECASE)
-            if identity and rationale and SEVERITY.get(status, -1) >= SEVERITY[finding["result"]]:
-                disclosed = True
-                break
-        v.add(f"DISCLOSURE/{key}", "Pass" if disclosed else "Fail", "README validation row with identifier/cell, unresolved severity and rationale/action", "disclosed" if disclosed else "missing disclosure", finding["evidence"])
+        disclosed = is_disclosed(key, finding, disclosures)
+        v.add(f"DISCLOSURE/{key}", "Pass" if disclosed else "Fail", DISCLOSURE_RULE, "disclosed" if disclosed else "missing disclosure", finding["evidence"])
     highest = max((SEVERITY[f["result"]] for f in v.findings.values()), default=0)
     status_cell = controls.get("Validation Summary")
     status = status_cell.cached if status_cell else None
@@ -502,14 +588,124 @@ def verify_disclosure(v, controls):
     v.add("DISCLOSURE/Validation Summary", "Pass" if status == expected else "Fail", expected, status, [status_cell] if status_cell else [])
 
 
+def check_required_rows(v, controls):
+    required = {table: (key, list(labels)) for table, (key, labels) in REQUIRED_ROWS.items()}
+    summary = v.tables.get("tbl_sizing_summary")
+    if summary:
+        roles = [h for h in summary.source.header if h not in SUMMARY_METADATA]
+        required["tbl_readme_control"][1].extend(f"{role} {field}" for role in roles for field in ROLE_CONTROLS)
+    for table, (key, labels) in required.items():
+        bound = v.tables.get(table)
+        if not bound or key not in bound.source.header:
+            v.add(f"PREFLIGHT/table/{table}", "Fail", f"table with a {key} column", None)
+            continue
+        present = [row[key].source for row in bound.rows]
+        missing = [label for label in labels if label not in present]
+        for label in missing:
+            close = difflib.get_close_matches(label, present, n=1, cutoff=0.6)
+            v.add(f"PREFLIGHT/required-row/{table}/{label}", "Fail", label, close[0] if close else None,
+                  note=f"Row label must match exactly; closest existing row is {close[0]!r}." if close
+                  else "Required row is missing.")
+        if not missing:
+            v.add(f"PREFLIGHT/required-rows/{table}", "Pass", len(labels), len(labels))
+    for field, allowed in (("Selected Delivery Basis", ("P25", "P50", "P75", "P90")),
+                           ("Reserve Denominator", ("Adjusted MD", "Delivery Baseline"))):
+        cell = controls.get(field)
+        if cell is not None and cell.data_type != "f":
+            v.add(f"PREFLIGHT/control/{field}", "Pass" if cell.source in allowed else "Fail",
+                  list(allowed), cell.source, [cell])
+    matrix = v.tables.get("tbl_resource_matrix")
+    if matrix and "Role" in matrix.source.header:
+        totals = sum(row["Role"].source == "Total FTE/week" for row in matrix.rows)
+        v.add("PREFLIGHT/resource-total-row", "Pass" if totals == 1 else "Fail", "one Total FTE/week row", totals)
+
+
+def check_formula_safety(v):
+    for name, table in v.tables.items():
+        for offset, row in enumerate(table.rows, 1):
+            for header, cell in row.items():
+                text = cell.source.strip()
+                if not text or text == "-" or text.startswith("`") or number(text) is not None:
+                    continue
+                if text[0] in "=+-@" or text.startswith("'="):
+                    v.add(f"FORMULA-SAFETY/{name}/{offset}/{header}", "Fail",
+                          "backtick-wrapped formula, number, or text with a non-formula prefix", text[:80], [cell],
+                          "Literal text starting with =, +, - or @ can become a spreadsheet formula.")
+
+
+def check_literal_disclosure(v, controls):
+    """Disclosure for literal Warning/Fail cells; formula-driven checks are deferred."""
+    deferred = []
+    formulas = row_checks(v)
+    if formulas:
+        deferred.append(f"{formulas} check cells are formulas; their results and disclosure are verified after recalculation.")
+    summary = v.tables.get("tbl_validation_summary")
+    disclosures = summary.rows if summary else []
+    highest = 0
+    for key, finding in list(v.findings.items()):
+        if not key.startswith("ROW-CHECK/"):
+            continue
+        highest = max(highest, SEVERITY[finding["result"]])
+        if key.startswith("ROW-CHECK/tbl_validation_summary/"):
+            continue
+        disclosed = is_disclosed(key, finding, disclosures)
+        v.add(f"DISCLOSURE/{key}", "Pass" if disclosed else "Fail", DISCLOSURE_RULE, "disclosed" if disclosed else "missing disclosure", finding["evidence"])
+    status_cell = controls.get("Validation Summary")
+    if status_cell is None:
+        return deferred
+    if status_cell.data_type == "f":
+        deferred.append("Validation Summary is a formula; its roll-up is verified after recalculation.")
+        return deferred
+    floor = next(name for name, rank in SEVERITY.items() if rank == highest)
+    okay = SEVERITY.get(status_cell.source, -1) >= highest
+    v.add("DISCLOSURE/Validation Summary", "Pass" if okay else "Fail", f"{floor} or higher", status_cell.source, [status_cell],
+          "Lower bound from literal check cells only.")
+    return deferred
+
+
+def summarize(v):
+    counts = {result: sum(f["result"] == result for f in v.findings.values()) for result in SEVERITY}
+    return ("Fail" if counts["Fail"] else "Warning" if counts["Warning"] else "Pass"), counts
+
+
+def identify(paths):
+    return {name: {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()} for name, path in paths.items()}
+
+
+def load_config(path):
+    cfg = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if not isinstance(cfg, dict):
+        raise ValueError("Config must be a mapping")
+    return cfg
+
+
+def preflight(input_path, config_path):
+    paths = {"markdown": Path(input_path), "config": Path(config_path)}
+    identities = identify(paths)
+    v = Verification()
+    deferred = []
+    if raw_widths(paths["markdown"], v):
+        registry = load_config(paths["config"]).get("sheets", []) or []
+        sections = parse_markdown(paths["markdown"])
+        if not sections:
+            v.add("STRUCTURE/source", "Fail", "workbook sections", [])
+        check_registry(sections, registry, v)
+        bind_source(sections, registry, v)
+        controls = v.index("tbl_readme_control", "Field", "Value")
+        check_required_rows(v, controls)
+        check_formula_safety(v)
+        deferred = check_literal_disclosure(v, controls)
+    status, counts = summarize(v)
+    return {"mode": "markdown-only", "status": status, "inputs": identities, "counts": counts,
+            "deferred": deferred, "coverage_limitations": PREFLIGHT_LIMITATIONS, "findings": v.findings}
+
+
 def verify(input_path, workbook_path, config_path):
     paths = {"markdown": Path(input_path), "workbook": Path(workbook_path), "config": Path(config_path)}
-    identities = {name: {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()} for name, path in paths.items()}
+    identities = identify(paths)
     v = Verification()
     if raw_widths(paths["markdown"], v):
-        cfg = yaml.safe_load(paths["config"].read_text(encoding="utf-8")) or {}
-        if not isinstance(cfg, dict):
-            raise ValueError("Config must be a mapping")
+        cfg = load_config(paths["config"])
         sections = parse_markdown(paths["markdown"])
         if not sections:
             v.add("STRUCTURE/source", "Fail", "workbook sections", [])
@@ -526,27 +722,33 @@ def verify(input_path, workbook_path, config_path):
         finally:
             formulas.close()
             cached.close()
-    counts = {result: sum(f["result"] == result for f in v.findings.values()) for result in SEVERITY}
-    status = "Fail" if counts["Fail"] else "Warning" if counts["Warning"] else "Pass"
-    return {"status": status, "inputs": identities, "numeric_tolerance_md": str(TOLERANCE),
+    status, counts = summarize(v)
+    return {"mode": "workbook", "status": status, "inputs": identities, "numeric_tolerance_md": str(TOLERANCE),
             "counts": counts, "coverage_limitations": LIMITATIONS, "findings": v.findings}
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", required=True, type=Path)
-    parser.add_argument("--workbook", required=True, type=Path)
+    parser.add_argument("--workbook", type=Path, help="Delivered XLSX; required unless --markdown-only.")
+    parser.add_argument("--markdown-only", action="store_true",
+                        help="Preflight the Markdown before the review gate; reads no workbook.")
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args(argv)
-    if args.output.resolve() in {p.resolve() for p in (args.input, args.workbook, args.config)}:
+    if args.markdown_only == (args.workbook is not None):
+        print("Pass exactly one of --workbook or --markdown-only", file=sys.stderr)
+        return 3
+    if args.output.resolve() in {p.resolve() for p in (args.input, args.workbook, args.config) if p}:
         print("Report output must not overwrite an input", file=sys.stderr)
         return 3
     try:
-        report = verify(args.input, args.workbook, args.config)
+        report = (preflight(args.input, args.config) if args.markdown_only
+                  else verify(args.input, args.workbook, args.config))
         code = SEVERITY[report["status"]]
     except Exception as exc:
-        report = {"status": "Error", "error": f"{type(exc).__name__}: {exc}", "coverage_limitations": LIMITATIONS}
+        report = {"status": "Error", "error": f"{type(exc).__name__}: {exc}",
+                  "coverage_limitations": PREFLIGHT_LIMITATIONS if args.markdown_only else LIMITATIONS}
         code = 3
     try:
         args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8")

@@ -41,4 +41,13 @@ MVP, cap, budget-fit, phased, 4-month และ scope-cut views เป็น sce
 
 ## เมื่อ baseline เปลี่ยน
 
-แก้ artifact เจ้าของก่อน. ตรวจ Summary, Handoff, Final Planning Baseline Snapshot, scenario tables, workbook sheets และ cross-step references ที่ได้รับผลทั้งหมด. Revision ใหม่ต้องมี approval evidence ของตัวเอง. ถ้ายังแก้ downstream ไม่ครบ ให้ระบุว่า stale และห้ามรายงานว่า baseline พร้อมใช้งาน.
+ใช้กับ `revise`, `re-baseline` และการแก้ตัวเลขหรือ scope ของ artifact ที่อนุมัติแล้ว.
+
+1. ก่อนแก้ ทำ impact table ของ Step 00 ถึง 06, workbook และ diagram. ให้แต่ละ artifact เป็น `Regenerate`, `Update sections`, `Note only` หรือ `Unaffected` พร้อมเหตุผล. ห้ามใช้ `Note only` กับ artifact ที่เป็นเจ้าของ scope, counts, score หรือตัวเลขที่เปลี่ยน.
+2. แสดง impact table ให้ผู้ใช้ก่อนเริ่ม. ถ้าคำสั่งระบุช่วง step แคบกว่าผลกระทบ ให้ถามว่าจะรวม artifact ที่เหลือหรือไม่.
+3. เก็บ revision เดิมไว้ที่ `output/archive/rev<N>/` ก่อนเขียนทับ. ไม่แก้ filename ของ artifact ปัจจุบัน.
+4. แก้ artifact เจ้าของก่อน แล้วแก้ downstream ตามลำดับ step. ตรวจ Summary, Handoff, Final Planning Baseline Snapshot, scenario tables, workbook sheets และ cross-step references ที่ได้รับผลทั้งหมด.
+5. Stale sweep: จดค่า headline ของ revision เดิม ได้แก่ Raw MD, Adjusted MD, duration, counts และคำเรียก delivery model แล้วค้นในทุก artifact ปัจจุบัน. แก้ทุกจุดที่พบ หรือระบุชัดว่าเป็นการเทียบกับ revision เดิม.
+6. Revision ใหม่ต้องมี approval evidence ของตัวเอง. Approval ของ revision เดิมไม่ส่งต่อ.
+
+Artifact ที่ยังไม่ได้แก้ให้ระบุ `Stale` พร้อมสิ่งที่ยังไม่ตรงใน header และใน gate. ห้ามรายงานว่า baseline พร้อมใช้งานขณะยังมี artifact ที่ stale.

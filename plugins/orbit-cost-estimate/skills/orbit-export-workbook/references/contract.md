@@ -62,6 +62,20 @@ Backtick-wrapped leading-`=` expressions become formula text. The converter neit
 
 The converter removes the apostrophe from literal `'=...`; openpyxl can then treat it as a formula. Do not rely on apostrophe escaping for untrusted text. Check source strings beginning with `=`, `+`, `-` or `@` separately from intentionally authored formulas and numeric inputs. Stop for safe literal handling, or use an explicit non-formula textual prefix in the reviewed Markdown. Do not execute untrusted source text as formulas.
 
+### Recalculation command
+
+Headless LibreOffice recalculates formulas when it converts the workbook. Write the result to a separate directory, confirm the file exists, then replace the converter output so the delivered file is the recalculated one.
+
+```bash
+RECALC_DIR="$(mktemp -d)"
+soffice --headless --calc --convert-to xlsx:"Calc MS Excel 2007 XML" \
+  --outdir "$RECALC_DIR" output/estimation_workbook.xlsx
+test -s "$RECALC_DIR/estimation_workbook.xlsx" &&
+  mv "$RECALC_DIR/estimation_workbook.xlsx" output/estimation_workbook.xlsx
+```
+
+`soffice` can exit `0` without writing a file, so the `test -s` check is the success signal. On macOS, use `/Applications/LibreOffice.app/Contents/MacOS/soffice` when `soffice` is not on `PATH`. Do not wrap the command in `timeout`: macOS does not ship it, and the failed wrapper skips recalculation without an obvious error. After the replacement, the verifier must report zero `FORMULA-CACHE` findings. Any that remain mean the recalculation did not take effect.
+
 When Excel or LibreOffice is available, recalculate the actual output and inspect cached values and formula errors. Independently reconcile source totals and all VAL-01 through VAL-14, then run the verifier below. When no calculation engine is available, put `Not recalculated` in both Markdown and the README control table, list independent numeric reconciliations and unresolved formula warnings, then convert and verify that representation. File creation alone is not a formula-check pass. Metadata or status changes must remain synchronized with Markdown. Rerun conversion when Markdown changes, then recalculate, visually inspect and verify the delivered file again.
 
 ## Independent workbook verifier
@@ -89,6 +103,19 @@ The JSON report contains keyed findings with expected, actual and cell evidence,
 | `2` | At least one Fail. Stop publication as verified output and correct the owning source/artifact. |
 | `3` | Input or runtime error. Surface diagnostics; do not claim verification completed. |
 
+### Markdown preflight
+
+`--markdown-only` replaces `--workbook` and checks the Markdown before any XLSX exists. Preparation runs it before its review gate. Export runs it again when the Markdown has no preflight report for the current revision. The bundled config is enough at preparation time because the preflight reads only the sheet/table registry, not phase bands.
+
+```bash
+python3 "$EXPORT_SKILL/scripts/verify_workbook.py" --markdown-only \
+  --input output/estimation_workbook.md \
+  --config "$EXPORT_SKILL/scripts/workbook_config.yaml" \
+  --output output/workbook_preflight.json
+```
+
+The report has `mode: markdown-only`, the same exit codes as the table above, and a `deferred` list naming what it could not evaluate. Coverage: row widths, registry tables, required row labels by exact text, the `Selected Delivery Basis` and `Reserve Denominator` literals, one `Total FTE/week` row, formula-like literal text, and disclosure of literal `Warning` or `Fail` check cells. It reads no formula result, so every formula-driven check and all numeric reconciliation wait for the workbook verifier. Exit `0` from the preflight is not workbook verification.
+
 Propagate the highest unresolved result through affected validation rows, README Validation Summary and final handoff. Use the canonical §4.0.2 Note format with exact row/cell evidence and rationale/action. Acknowledging a Warning does not erase it. If disclosure requires a Markdown change, regenerate, recalculate and rerun the verifier so final hashes match. Retain independent review of source approvals, operation-specific actors, assumptions, semantic coverage and visual layout.
 
 ## Verification before publication
@@ -97,7 +124,7 @@ Propagate the highest unresolved result through affected validation rows, README
 2. Review the explicit project config, source-derived phase bands, role coverage and address layout. Preserve scenario separation, QA test-case inputs, additional approved roles, PM derivation, warranty and reserve treatment.
 3. Run conversion and retain the command, config path/revision, input revision, exit code and diagnostics as conversion provenance. Do not insert conversion success provenance before the attempt.
 4. Inspect the resulting workbook in the actual rendering application or rendered pages. Check sheets, formulas, row coordinates, identifier spelling/types, phase bands, timeline fills, status formatting, glyph coverage, clipped text and meaningful print headers. Inspect again after the final layout adjustment. A success log, configured font name or valid ZIP alone is not visual verification.
-5. Recalculate when available, then run the verifier against the delivered workbook and inspect its report. Preserve `Not recalculated` and warnings otherwise. Evaluate uncovered VAL checks with independent source evidence. Do not infer semantic atomicity, actor correctness, assumption confirmation or acceptance from populated cells.
+5. Recalculate when available with the [recalculation command](#recalculation-command), then run the verifier against the delivered workbook and inspect its report. Preserve `Not recalculated` and warnings otherwise. Evaluate uncovered VAL checks with independent source evidence. Do not infer semantic atomicity, actor correctness, assumption confirmation or acceptance from populated cells.
 6. Report the actual file/report paths, source revision, calculation engine/status, visual inspection evidence, verifier command/exit, coverage limitations and remaining row/cell warnings. Stop for review. Do not invoke another action.
 
 ## Errors and exit codes

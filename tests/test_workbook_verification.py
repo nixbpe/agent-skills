@@ -146,13 +146,32 @@ class WorkbookFixture:
             for name, data in files.items():
                 archive.writestr(name, data)
 
-    def run(self):
+    def run(self, markdown_only=False):
+        mode = ["--markdown-only"] if markdown_only else ["--workbook", str(self.workbook)]
         result = subprocess.run([sys.executable, str(VERIFIER), "--input", str(self.markdown),
-                                 "--workbook", str(self.workbook), "--config", str(self.config),
+                                 *mode, "--config", str(self.config),
                                  "--output", str(self.report)], capture_output=True, text=True)
         if not self.report.exists():
             raise AssertionError(result.stdout + result.stderr)
         return result.returncode, json.loads(self.report.read_text(encoding="utf-8"))
+
+    def complete_required_rows(self):
+        controls = self.tables["tbl_readme_control"][2]
+        present = {row[0] for row in controls}
+        for field in ("Workbook Name", "Project Name", "Version", "Generated Date", "Source Artifacts",
+                      "Approved Baseline Scope", "Approval State", "Approval Basis", "No-Pricing Rule",
+                      "Confidence", "Integration Count", "External Risk Count", "Top Risks",
+                      "Re-estimation Triggers", "Baseline-vs-Scenario Note"):
+            if field not in present:
+                controls.append([field, "fixture value", "fixture", ""])
+        snapshot = self.tables["tbl_final_snapshot"][2]
+        for field in ("Top Risks", "Confidence", "Re-estimation Triggers"):
+            snapshot.append([field, "fixture value", "fixture", ""])
+
+    def preflight(self):
+        self.write()
+        self.workbook.unlink()
+        return self.run(markdown_only=True)
 
 
 class WorkbookVerificationTests(unittest.TestCase):
@@ -407,6 +426,68 @@ class WorkbookVerificationTests(unittest.TestCase):
         code, report = self.fixture.run()
         self.assertEqual(code, 2)
         self.assertEqual(report["findings"]["STRUCTURE/header/tbl_feature_inventory"]["result"], "Fail")
+
+    def test_preflight_passes_complete_markdown_without_a_workbook(self):
+        self.fixture.complete_required_rows()
+        code, report = self.fixture.preflight()
+        failures = {k: f for k, f in report["findings"].items() if f["result"] != "Pass"}
+        self.assertEqual((code, report["mode"], failures), (0, "markdown-only", {}))
+        self.assertEqual(set(report["inputs"]), {"markdown", "config"})
+
+    def test_preflight_rejects_range_label_the_workbook_verifier_cannot_find(self):
+        self.fixture.complete_required_rows()
+        self.fixture.set_value("tbl_range_reserve", "Recommended Contingency MD", "Category / Scenario", "Recommended Contingency")
+        code, report = self.fixture.preflight()
+        finding = report["findings"]["PREFLIGHT/required-row/tbl_range_reserve/Recommended Contingency MD"]
+        self.assertEqual((code, finding["result"], finding["actual"]), (2, "Fail", "Recommended Contingency"))
+
+    def test_preflight_requires_role_controls_for_every_summary_role(self):
+        self.fixture.complete_required_rows()
+        controls = self.fixture.tables["tbl_readme_control"][2]
+        controls[:] = [row for row in controls if row[0] != "BE Buffer Rate"]
+        code, report = self.fixture.preflight()
+        self.assertEqual(code, 2)
+        self.assertEqual(report["findings"]["PREFLIGHT/required-row/tbl_readme_control/BE Buffer Rate"]["result"], "Fail")
+
+    def test_preflight_literal_warning_needs_disclosure_and_summary_rollup(self):
+        self.fixture.complete_required_rows()
+        self.fixture.set_value("tbl_sizing_summary", "Non-Dev", "QA vs FE+BE Check", "Warning")
+        code, report = self.fixture.preflight()
+        self.assertEqual(code, 2)
+        self.assertEqual(report["findings"]["DISCLOSURE/ROW-CHECK/tbl_sizing_summary/Non-Dev/QA vs FE+BE Check"]["result"], "Fail")
+        self.assertEqual(report["findings"]["DISCLOSURE/Validation Summary"]["result"], "Fail")
+        self.fixture.tables["tbl_validation_summary"][2].append(
+            ["VAL-03", "Warning", "Medium", "finding=VAL-03; row=Non-Dev; rationale=QA sized from test cases"])
+        self.fixture.set_value("tbl_readme_control", "Validation Summary", "Value", "Warning")
+        code, report = self.fixture.preflight()
+        failed = [k for k, f in report["findings"].items() if f["result"] == "Fail"]
+        self.assertEqual((code, failed), (1, []))
+
+    def test_preflight_defers_formula_checks_instead_of_passing_them(self):
+        self.fixture.complete_required_rows()
+        self.fixture.set_value("tbl_sizing_summary", "Non-Dev", "QA vs FE+BE Check", Formula('=IF(B5>0,"Warning","Pass")', "Warning"))
+        code, report = self.fixture.preflight()
+        self.assertEqual(code, 0)
+        self.assertIn("1 check cells are formulas", report["deferred"][0])
+        self.assertNotIn("ROW-CHECK/tbl_sizing_summary/Non-Dev/QA vs FE+BE Check", report["findings"])
+
+    def test_preflight_rejects_formula_like_literal_text(self):
+        self.fixture.complete_required_rows()
+        self.fixture.set_value("tbl_readme_control", "Project Name", "Note", "=HYPERLINK(1)")
+        self.fixture.set_value("tbl_readme_control", "Version", "Note", "- trailing bullet")
+        self.fixture.set_value("tbl_readme_control", "Raw MD", "Note", "-4")
+        code, report = self.fixture.preflight()
+        unsafe = sorted(f["actual"] for k, f in report["findings"].items() if k.startswith("FORMULA-SAFETY/"))
+        self.assertEqual((code, unsafe), (2, ["- trailing bullet", "=HYPERLINK(1)"]))
+
+    def test_mode_requires_exactly_one_of_workbook_or_markdown_only(self):
+        self.fixture.write()
+        base = [sys.executable, str(VERIFIER), "--input", str(self.fixture.markdown),
+                "--config", str(self.fixture.config), "--output", str(self.fixture.report)]
+        for extra in ([], ["--markdown-only", "--workbook", str(self.fixture.workbook)]):
+            result = subprocess.run(base + extra, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 3)
+            self.assertFalse(self.fixture.report.exists())
 
     def test_input_error_has_separate_exit(self):
         self.fixture.write()

@@ -465,7 +465,7 @@ Four sub-tables + snapshot block. Risk score integer; conditionally highlight Hi
 
 | Col | Header | Description | Example value | Format guide |
 | ----- | ----------------------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------- |
-| A | Category / Scenario | Adjusted MD / Contingency / Delivery Baseline / Management Reserve / Planning Total / P25 / P50 / P75 / P90 | `P75` | text |
+| A | Category / Scenario | Exact row label from the required list below, or a named Step 06 adjustment | `P75` | text |
 | B | Effort MD | Effort value | [resolved A1 formula] | formula 0.0 |
 | C | Percent of Adjusted MD | `Effort MD / Adjusted MD` | `=B2/$B$2` (illustrative) | formula percent 0.0% |
 | D | Confidence | Confidence level | `75%` | percent 0.0% |
@@ -508,6 +508,8 @@ Key-value block; same layout as `tbl_readme_control` but locked to the Step 06 f
 | D | Note | Clarification | `Locked 2026-05-21` | text |
 
 Required `Field` rows: Adjusted MD, Recommended Contingency MD, Selected Commitment Uplift, Contingency MD, Selected Delivery Basis, Delivery Baseline, Management Reserve, Planning Total, P25, P50, P75, P90, Top Risks, Confidence, Re-estimation Triggers.
+
+Required `Category / Scenario` rows in `tbl_range_reserve`: Adjusted MD, Recommended Contingency MD, Selected Commitment Uplift, Contingency MD, Delivery Baseline, Management Reserve, Planning Total, P25, P50, P75, P90. The verifier looks these rows up by exact text, so `Recommended Contingency` or `Contingency` without ` MD` fails verification. Expected-risk and named-adjustment rows keep their Step 06 names.
 
 In `tbl_range_reserve`, preserve the expected-risk subtotal and every named Step 06 adjustment as separate rows so Recommended Contingency is derivable. Selected delivery Contingency = Recommended Contingency + Selected Commitment Uplift. If P75 is selected, Delivery Baseline must equal P75. Never double-count uplift or reserve.
 
@@ -651,3 +653,9 @@ Keep independent semantic review against approved Step 01-06 detail rows. Check 
 | VAL-14 | Formula-first mechanical checks use valid resolved A1 addresses and produce no circular/undefined references. Recalculated values match independent numeric checks, or README records Not recalculated with warnings. |
 
 For VAL-08, let A be Step 05 Adjusted MD and C be non-negative Recommended Contingency MD. Independently compute P25 = A + min(C, max(0.5 × C, 0.05 × A)), P50 = A + C, P75 = P50 + max(0.5 × C, 0.05 × A), and P90 = P75 + max(0.5 × C, 0.10 × A). Then check P25 ≤ P50 ≤ P75 ≤ P90. Compare each actual cell with its own expected result, not only the adjacent range values. Use the approved Step 06 exception if one exists and disclose the deviation. These are planning heuristics, not statistically validated percentiles.
+
+### Markdown preflight
+
+Run the verifier's [Markdown-only mode](../../orbit-export-workbook/references/contract.md#markdown-preflight) on `output/estimation_workbook.md` before the review gate in §5.6. It reads no workbook and does not run the converter. It fails on a missing required row label in `tbl_readme_control`, `tbl_sizing_summary`, `tbl_range_reserve` or `tbl_final_snapshot`, a row whose width differs from its header, a registry table that is missing or out of order, literal text that starts with `=`, `+`, `-` or `@`, and a literal `Warning` or `Fail` check cell without a §4.0.2 disclosure row.
+
+Fix every Fail in the Markdown and rerun before presenting the gate. A user who approves a Markdown revision that later needs a label or disclosure change has to review it again. The preflight defers check cells written as formulas and does no numeric reconciliation, so it does not replace the independent VAL-01 through VAL-14 evaluation or the workbook verifier after export. If Python or the bundled requirements are unavailable, report `Preflight not run`, check the required row labels by hand against §4, and keep that limitation in the gate.
