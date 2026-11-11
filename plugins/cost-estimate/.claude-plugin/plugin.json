@@ -1,6 +1,6 @@
 {
   "name": "cost-estimate",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Plan scope, effort, resources, and risk with estimation skills and shared principles.",
   "author": { "name": "nixbpe" },
   "repository": "https://github.com/nixbpe/agent-skills",

@@ -32,6 +32,9 @@ description: "Use before publishing estimation planning artifacts, workbook form
 | อ่านรู้เรื่อง | ไม่มีประโยคหรือ cell ที่ถูกตัด, placeholder, dict/object repr หรือ ID ที่เรียงสลับ |
 | IDs | ส่วนเหนือ `ภาคผนวก` ใช้ ID ตาม [กฎ ID ของ reviewer-first](../principle-reviewer-first/SKILL.md#ภาษาและความครบถ้วน) |
 | กระชับ | ผู้ทบทวนตัดสินใจได้จากส่วนเหนือ `ภาคผนวก` โดยไม่ต้องเปิดภาคผนวก. ไม่มีตัวเลขหรือข้อความซ้ำ |
+| ข้อความ | Prose ผ่าน [prose review](references/prose-review.md): ประโยคอ่านได้ความหมายเดียว, มีเนื้อหาเฉพาะของโครงการ และรูปแบบไม่บังคับเนื้อหา |
+
+Prose review แก้เฉพาะถ้อยคำ. ห้ามแก้ contract tokens, ตัวเลข, facts, ระดับข้อผูกพัน หรือ evidence status. ถ้าการแก้ถ้อยคำต้องใช้ข้อมูลที่ไม่มี ให้บันทึกเป็น Open item.
 
 แก้ที่ artifact เจ้าของ แล้ว rerun mechanical checks ที่ได้รับผลก่อนเริ่มรอบถัดไป. ประเด็นที่เหลือหลังรอบที่ 3 ให้บันทึกเป็น Warning/Fail finding.
 
