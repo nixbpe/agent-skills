@@ -1,6 +1,6 @@
 ---
 name: define-work
-description: Define or refine product scope, observable acceptance criteria, outcome metrics, and real dependencies for assigned work.
+description: Define or refine product scope, observable acceptance criteria, outcome metrics, and real dependencies for assigned work, and assess whether an item is ready-for-delivery.
 ---
 
 # Define work
@@ -36,8 +36,22 @@ Read these files in full before acting. Recover truncated output before proceedi
 
 Check that each criterion names an observable result and that each factual claim cites inspected evidence. Check dependency inputs and owners against actual contracts. Report missing evidence rather than inventing readiness. This is requirements analysis, not candidate verification, technical acceptance, measured outcome achievement, or release approval.
 
+## Delivery readiness
+
+Report `ready-for-delivery` for an item only when every condition holds. Report each condition as `observed pass`, `observed fail`, or `not verified`.
+
+1. Scope and non-goals are stated in the item.
+2. Every acceptance criterion names an observable result, including boundary and failure outcomes.
+3. No product decision that affects the item's behavior remains open.
+4. Every blocking dependency has a confirmed owner, and its required input has reached the ready condition.
+5. An authorized person approved the exact content revision. Cite the approval record.
+
+Otherwise report `not ready` with the failed conditions and the owner of each. This skill never supplies the approval in condition 5. A content change after approval returns the item to `not ready` until the new revision is approved.
+
+Record the state in the project's existing status field or label when one exists. Do not invent a label, field, or document for it. The state permits selection for delivery. It grants no implementation or publication authority.
+
 ## Output and stop conditions
 
-Return the complete assigned artifact, not only identifiers or a synopsis. Include its identity and revision when used, parent links, scope, flows, criteria, approved decisions, evidence and counterevidence, assumptions, and blockers. Report what remains unapproved and name the next owner with the exact required input.
+Return the complete assigned artifact, not only identifiers or a synopsis. Include its identity and revision when used, parent links, scope, flows, criteria, approved decisions, evidence and counterevidence, assumptions, and blockers. Report what remains unapproved and name the next owner with the exact required input. Include the delivery readiness state when the request asks for a readiness assessment or the item feeds unattended delivery.
 
 Stop at the requested planning boundary. Missing critical evidence or conflicting commitments block the affected decision. Product approval does not authorize implementation, publication, deployment, or release.

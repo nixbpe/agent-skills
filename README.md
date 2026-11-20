@@ -151,6 +151,7 @@ operations. Each action can run independently when its inputs are available.
 
 ```text
 /delivery:define-work Turn the saved-cart request into scope, non-goals, and observable acceptance criteria in the project's existing backlog. Ask about unresolved product decisions. Do not implement.
+/delivery:define-work Assess whether issue #42 is ready-for-delivery. Report each readiness condition and the owner of any failed one. Do not change the criteria or implement.
 /delivery:design-solution Design the API and persistence changes for the approved saved-cart criteria. Compare them with existing contracts and split the work into bounded tasks. Do not edit application code.
 /delivery:design-experience Design the saved-cart flow against the approved criteria. Cover empty, loading, failure, and keyboard-accessible states. Do not invent user research.
 ```

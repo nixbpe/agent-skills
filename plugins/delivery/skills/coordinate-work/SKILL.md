@@ -54,7 +54,8 @@ Before the user enables automerge, scheduled runs, or an agent loop that ships w
 1. Lint, type, and dependency-boundary checks run in CI and block merge. Repeated mistakes have a guardrail (see [guardrail hardening](../harden-guardrails/SKILL.md)).
 2. Known workarounds and deprecated patterns in the touched areas are cleaned up or listed.
 3. Agents can verify behavior in the running app or test environment and attach evidence.
-4. Only then automate. Automating an inner loop that still fails multiplies token cost on repairs.
+4. The loop selects only items reported `ready-for-delivery` under [work definition](../define-work/SKILL.md). It skips `not ready` items and reports them.
+5. Only then automate. Automating an inner loop that still fails multiplies token cost on repairs.
 
 Any `observed fail` or `not verified` blocks the recommendation to automate. Enabling automation remains a separate user decision.
 

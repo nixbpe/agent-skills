@@ -16,6 +16,8 @@ Use accepted issue criteria directly. Do not require a new feature record, accep
 
 Obtain the issue URL or number, or the explicit requested capability change. Identify its accepted outcomes, contracts, dependencies, and non-goals. Record the current workspace, requested stop state, and separate permissions for implementation and each publication operation.
 
+An unattended run selects only an item reported `ready-for-delivery` under [work definition](../define-work/SKILL.md), at the approved revision. A person's explicit request for one issue does not need that state.
+
 An open product decision, deferred work, or a dependency that has not reached its required state blocks the affected implementation. Do not reinterpret the requested behavior to avoid that gate.
 
 ## Required reading
