@@ -56,7 +56,7 @@ Do not rewrite history, force-push, retarget the PR, touch another branch, merge
 
 ## Verification
 
-Merge-ready requires all of the following on the same head.
+Merge-ready uses the [Git safety](../deliver-change/references/git-safety.md) definition. For a PR, it requires all of the following on the same head.
 
 - The PR follows the required template and repository patterns, and its claims have evidence.
 - Required CI and local verification pass.

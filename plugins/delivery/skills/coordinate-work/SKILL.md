@@ -61,7 +61,7 @@ Any `observed fail` or `not verified` blocks the recommendation to automate. Ena
 
 ## Verification
 
-Verify outcomes through owner evidence against the exact reviewed source. Keep review, focused proof, full gates, and environment evidence distinct. Existing valid evidence can be reused only when its identity and scope still match. Merge-ready requires the applicable independent review and PR gates. Full release checks, image scanning, binding, and environment readiness belong to release qualification.
+Verify outcomes through owner evidence against the exact reviewed source. Keep review, focused proof, full gates, and environment evidence distinct. Existing valid evidence can be reused only when its identity and scope still match. Merge-ready uses the [Git safety](../deliver-change/references/git-safety.md) definition: the required review and CI conditions pass on the same head. It also requires the applicable independent review and PR gates. Without a published head, or while required CI has not run on it, report the state actually reached, mark CI `not verified`, and name the missing publication permission. Full release checks, image scanning, binding, and environment readiness belong to release qualification.
 
 The coordinator decides technical integration and triage within delegated authority. It cannot change accepted scope, downgrade finding severity, infer production approval, or substitute a design for observed behavior.
 
