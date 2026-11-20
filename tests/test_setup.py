@@ -141,7 +141,7 @@ class SetupSafetyTests(unittest.TestCase):
         self.run_setup("install")
         sources = {
             ".claude/skills/cost-estimate": "plugins/cost-estimate/skills/cost-estimate",
-            ".claude/skills/delivery-debug": "plugins/delivery/skills/delivery-debug",
+            ".claude/skills/debug-failure": "plugins/delivery/skills/debug-failure",
             ".claude/agents/delivery-worker.md": "plugins/delivery/agents/delivery-worker.md",
             ".claude/agents/delivery-reviewer.md": "plugins/delivery/agents/delivery-reviewer.md",
         }
@@ -172,17 +172,32 @@ class SetupSafetyTests(unittest.TestCase):
 
     def test_missing_plugin_skill_document_blocks_update(self):
         self.run_setup("install")
-        document = self.repo / "plugins/delivery/skills/delivery-debug/SKILL.md"
+        document = self.repo / "plugins/delivery/skills/debug-failure/SKILL.md"
         document.unlink()
         before = self.snapshot()
         self.run_setup("check", "--source-only", success=False)
         self.run_setup("install", success=False)
         self.assertEqual(self.snapshot(), before)
 
+    def test_renamed_skill_replaces_its_old_link_on_install(self):
+        self.run_setup("install", "--agent", "claude")
+        skills = self.repo / "plugins/delivery/skills"
+        (skills / "debug-failure").rename(skills / "diagnose-failure")
+        document = skills / "diagnose-failure/SKILL.md"
+        document.write_text(
+            document.read_text(encoding="utf-8").replace("name: debug-failure", "name: diagnose-failure"),
+            encoding="utf-8",
+        )
+        self.run_setup("check", "--agent", "claude", success=False)
+        self.run_setup("install", "--agent", "claude")
+        self.assertFalse((self.home / ".claude/skills/debug-failure").is_symlink())
+        self.assertTrue((self.home / ".claude/skills/diagnose-failure").is_symlink())
+        self.run_setup("check", "--agent", "claude")
+
     def test_duplicate_plugin_skill_name_blocks_update(self):
         self.run_setup("install")
-        source = self.repo / "plugins/delivery/skills/delivery-debug"
-        shutil.copytree(source, self.repo / "plugins/cost-estimate/skills/delivery-debug")
+        source = self.repo / "plugins/delivery/skills/debug-failure"
+        shutil.copytree(source, self.repo / "plugins/cost-estimate/skills/debug-failure")
         before = self.snapshot()
         self.run_setup("install", success=False)
         self.assertEqual(self.snapshot(), before)

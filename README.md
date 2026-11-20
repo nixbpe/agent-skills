@@ -87,9 +87,9 @@ your actual inputs and accepted scope.
 For example, the same debugging request in each installation:
 
 ```text
-/delivery:delivery-debug Fix the reported checkout failure using the attached logs. Verify the repair. Do not commit or push.
-/delivery-debug Fix the reported checkout failure using the attached logs. Verify the repair. Do not commit or push.
-/skill:delivery-debug Fix the reported checkout failure using the attached logs. Verify the repair. Do not commit or push.
+/delivery:debug-failure Fix the reported checkout failure using the attached logs. Verify the repair. Do not commit or push.
+/debug-failure Fix the reported checkout failure using the attached logs. Verify the repair. Do not commit or push.
+/skill:debug-failure Fix the reported checkout failure using the attached logs. Verify the repair. Do not commit or push.
 ```
 
 Choose one invocation, not all three. The examples below use Claude plugins.
@@ -150,18 +150,18 @@ operations. Each action can run independently when its inputs are available.
 #### Define and design a change
 
 ```text
-/delivery:delivery-define-work Turn the saved-cart request into scope, non-goals, and observable acceptance criteria in the project's existing backlog. Ask about unresolved product decisions. Do not implement.
-/delivery:delivery-design-solution Design the API and persistence changes for the approved saved-cart criteria. Compare them with existing contracts and split the work into bounded tasks. Do not edit application code.
-/delivery:delivery-design-experience Design the saved-cart flow against the approved criteria. Cover empty, loading, failure, and keyboard-accessible states. Do not invent user research.
+/delivery:define-work Turn the saved-cart request into scope, non-goals, and observable acceptance criteria in the project's existing backlog. Ask about unresolved product decisions. Do not implement.
+/delivery:design-solution Design the API and persistence changes for the approved saved-cart criteria. Compare them with existing contracts and split the work into bounded tasks. Do not edit application code.
+/delivery:design-experience Design the saved-cart flow against the approved criteria. Cover empty, loading, failure, and keyboard-accessible states. Do not invent user research.
 ```
 
 #### Implement or debug
 
 ```text
-/delivery:delivery-debug Explain the parser failure from the supplied source and stack trace. Read files only. Do not execute commands, edit files, delegate, or create resources.
-/delivery:delivery-implement-change Implement the approved saved-cart task in src/cart/ and its tests. Preserve the agreed API. Exercise the changed behavior and report evidence. Do not commit or push.
-/delivery:delivery-debug Diagnose the checkout failure using the supplied reproduction and logs. Repair only the affected cart code and verify the fix. Do not change accepted behavior or publish.
-/delivery:delivery-harden-guardrails The reviewer corrected the same setTimeout(0) workaround three times in src/cart/. Add a lint rule or type change that blocks it, with a failure message that states the fix. List existing instances. Do not commit or push.
+/delivery:debug-failure Explain the parser failure from the supplied source and stack trace. Read files only. Do not execute commands, edit files, delegate, or create resources.
+/delivery:implement-change Implement the approved saved-cart task in src/cart/ and its tests. Preserve the agreed API. Exercise the changed behavior and report evidence. Do not commit or push.
+/delivery:debug-failure Diagnose the checkout failure using the supplied reproduction and logs. Repair only the affected cart code and verify the fix. Do not change accepted behavior or publish.
+/delivery:harden-guardrails The reviewer corrected the same setTimeout(0) workaround three times in src/cart/. Add a lint rule or type change that blocks it, with a failure message that states the fix. List existing instances. Do not commit or push.
 ```
 
 #### Review code and security
@@ -170,16 +170,16 @@ Run code review with a reviewer separate from the implementer. Supply the full
 diff, source identity, accepted criteria, and author verification evidence.
 
 ```text
-/delivery:delivery-review-change Independently review the supplied saved-cart diff and author handoff against the accepted criteria. Report findings with file references and missing evidence. Do not edit files or execute commands.
-/delivery:delivery-secure-boundaries Review the cart API changes for authorization, tenant isolation, and untrusted input handling. Use the project's security rules. Report evidence-backed findings without changing code or installing dependencies.
+/delivery:review-change Independently review the supplied saved-cart diff and author handoff against the accepted criteria. Report findings with file references and missing evidence. Do not edit files or execute commands.
+/delivery:secure-boundaries Review the cart API changes for authorization, tenant isolation, and untrusted input handling. Use the project's security rules. Report evidence-backed findings without changing code or installing dependencies.
 ```
 
 #### Coordinate work and handle a PR
 
 ```text
-/delivery:delivery-coordinate-work Coordinate the approved saved-cart change across API and UI owners. Assign non-overlapping files and verification duties, then obtain independent review. Stop at merge-ready. Do not merge or deploy.
-/delivery:delivery-deliver-change Implement issue #42 against its accepted criteria and verify it. You may create a branch, commit, push, and open a PR. Stop with the PR open. Do not merge or deploy.
-/delivery:delivery-review-pr Review PR #42 at its current head against accepted criteria and required checks. You may repair in-scope defects on its branch, commit, and push. Obtain independent review and stop at merge-ready. Do not merge.
+/delivery:coordinate-work Coordinate the approved saved-cart change across API and UI owners. Assign non-overlapping files and verification duties, then obtain independent review. Stop at merge-ready. Do not merge or deploy.
+/delivery:deliver-change Implement issue #42 against its accepted criteria and verify it. You may create a branch, commit, push, and open a PR. Stop with the PR open. Do not merge or deploy.
+/delivery:repair-pr Review PR #42 at its current head against accepted criteria and required checks. You may repair in-scope defects on its branch, commit, and push. Obtain independent review and stop at merge-ready. Do not merge.
 ```
 
 The last two examples explicitly authorize publication. Remove those permissions
@@ -191,7 +191,7 @@ Provide merge-ready evidence, frozen acceptance, the target environment, access
 limits, and named gate owners and an independent reviewer:
 
 ```text
-/delivery:delivery-qualify-release Qualify PR #42 using the supplied merge-ready evidence, frozen criteria, and approved staging environment. Use the named gate owners and independent reviewer. Stop at release-ready. Do not merge, deploy, or publish a release. Report missing prerequisites as blockers.
+/delivery:qualify-release Qualify PR #42 using the supplied merge-ready evidence, frozen criteria, and approved staging environment. Use the named gate owners and independent reviewer. Stop at release-ready. Do not merge, deploy, or publish a release. Report missing prerequisites as blockers.
 ```
 
 Release qualification does not authorize deployment.
@@ -250,6 +250,21 @@ To remove either plugin:
 claude plugin uninstall cost-estimate@nixbpe-agent-skills
 claude plugin uninstall delivery@nixbpe-agent-skills
 ```
+
+### Upgrade delivery to 2.0.0
+
+Version 2.0.0 renames every delivery skill. Old invocations stop working.
+
+| Before | After |
+|---|---|
+| `delivery-<action>` | `<action>`, for example `/delivery:implement-change` |
+| `delivery-debug` | `debug-failure` |
+| `delivery-review-pr` | `repair-pr` |
+| `principle-delivery-<name>` | `principle-<name>` |
+
+The `delivery-worker` and `delivery-reviewer` profiles keep their names. For a
+checkout-based installation, run `install` again after `git pull`. It removes
+the links to the old skill names.
 
 ### Checkout-based installations
 
