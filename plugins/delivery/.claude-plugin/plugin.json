@@ -1,6 +1,6 @@
 {
   "name": "delivery",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Define, implement, review, and qualify software changes with shared principles, a worker profile, and a reviewer profile.",
   "author": { "name": "nixbpe" },
   "repository": "https://github.com/nixbpe/agent-skills",

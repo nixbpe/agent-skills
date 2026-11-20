@@ -15,18 +15,15 @@ Do not require this workflow for ordinary implementation or PR review. A release
 
 Obtain the selected PR, issue, or explicitly scoped change, its merge-ready evidence, frozen acceptance content, approved contracts, and authorized environment. Require the target constraints, environment owner, worker gate owners, independent reviewer, and source inspection owner.
 
-Use an existing accepted identifier when one exists. Otherwise derive a stable source reference as `PR-N`, `issue-N`, or a scoped slug. Do not invent a Feature ID. Derive `acceptanceVersion` from the immutable accepted-content revision or digest, not from the current date or an invented version number.
+Use an existing accepted identifier when one exists. Otherwise derive a stable source reference as `PR-N`, `issue-N`, or a scoped slug. Do not invent a Feature ID.
 
 Stop if merge-ready evidence, frozen acceptance, target identity, or required access is missing. An assumption cannot replace a production target or credential.
 
 ## Required reading
 
-Read unconditional dependencies before acting and conditional dependencies before the matching operation. Recover truncated reads and resolve links from their containing document.
+Read unconditional dependencies before acting and conditional dependencies before the matching operation.
 
-- Read the [authority principle](../principle-authority/SKILL.md).
-- Read the [owned writes principle](../principle-owned-writes/SKILL.md).
-- Read the [source and evidence principle](../principle-source-evidence/SKILL.md).
-- Read the [trust boundaries principle](../principle-trust-boundaries/SKILL.md).
+- Read the [authority](../principle-authority/SKILL.md), [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles. They own the rules on permissions, ownership, evidence labels, severity mapping, and untrusted data, which this skill does not repeat.
 - Read the [candidate binding contract](references/candidate-binding.md).
 - Read the [project context contract](../coordinate-work/references/project-context.md).
 - Read the [assignment and handoff contract](../coordinate-work/references/assignment-and-handoff.md).
@@ -48,9 +45,9 @@ Read the repository's release, quality, environment, migration, recovery, and de
    A launch command or running process does not prove readiness. Require a health response, connection, or exercised operation. A destructive migration is safely reversible only with observed reversal evidence. Name each failed prerequisite, cause when established, and affected gate. Do not apply infrastructure or migrations outside authorized scope.
 3. Follow the states `mutating`, `source-complete`, `reviewed`, `bound`, `validating`, and `release-ready`. Report only the current state. After every writer stops, finish authorized lockfile, generated-file, and formatting work before source review and binding.
 4. Bind the reviewed source through the authorized binding owner. Use a clean commit SHA with a complete candidate manifest, or the project's immutable worktree snapshot mechanism. Include untracked candidate files and deletions. Distinguish unrelated ambient files rather than silently absorbing or ignoring them. If their ownership cannot be separated, stop.
-5. Name the candidate `<source-ref>-C<n>`. Record the triple `candidateId`, `acceptanceVersion`, and `manifestDigest`, with its source identity and immutable manifest. Every bound review, gate, scanner report, and verdict cites the same triple. Preserve evidence as immutable records outside candidate source. Do not overwrite a previous result to disguise a repair.
+5. Name the candidate `<source-ref>-C<n>` and record its triple under the candidate binding contract. Every bound review, gate, scanner report, and verdict cites the same triple. Preserve evidence as immutable records outside candidate source. Do not overwrite a previous result to disguise a repair.
 6. Assign no-edit application gates and platform scanners to authorized worker owners, who read [implementation](../implement-change/SKILL.md) before execution or repair. Run the project's required release gate categories, including validation, integration, coverage, end-to-end behavior, security, and image scanning where required. Required build and environment checks remain required. PR CI does not prove an omitted gate. Run missing authorized gates or report them `not verified`.
-7. For every scanner result, require the binding, exact command, tool version, configuration, execution identity, date, exit code, and result location. Account for every manifest path as scanned or scanner-skipped with a reason. Deleted paths count as skipped. Reconcile `nonCandidateExclusions` separately. They never waive coverage of candidate source. A skipped scanner, unscanned required path, or execution error is no result, not a pass.
+7. For every scanner result, require the gate record fields and manifest path accounting in the candidate binding contract. Reconcile `nonCandidateExclusions` separately. A skipped scanner, unscanned required path, or execution error is no result, not a pass.
 8. Obtain independent bound-evidence review from a separate reviewer actor. Supply the authorized-owner diff, metadata, manifest, criterion proof, environment checkpoint, and scanner evidence. The reviewer performs static inspection only. Require matching identity and scope, complete manifest accounting, and each criterion as `observed pass`, `observed fail`, or `not verified`.
 9. Batch findings and failed gates into one repair cycle. Read [debugging](../debug-failure/SKILL.md) before diagnosing failures. Repair only frozen acceptance defects or violations of approved contracts. Source changes invalidate the candidate: return to `mutating`, repeat source review, bind the next candidate, and regenerate required proof. Record the superseded candidate and addressed findings. Without source changes, rerun failed gates without relabeling stale or mismatched evidence.
 10. Count repair cycles from the immutable evidence records of this source reference, including superseded candidates from earlier sessions, not from the current session alone. Allow one repair cycle and one final delta review. Permit a second and last cycle only for a reproducible blocking defect. Under the Blocker/Major/Minor/Nit scheme, that exception requires a reproducible Blocker or Major defect. A missing proof record alone does not authorize an extra cycle. Record non-blocking follow-ups. Do not increase the cap or broaden acceptance yourself.
@@ -62,7 +59,7 @@ Any candidate-source change, including formatting or generated output, invalidat
 
 Require frozen acceptance, resolved blocking findings, no unclassified findings, passing full gates, a passing environment checkpoint, and independent approval on one unchanged binding. Missing, mismatched, failed, or unverified required evidence blocks release-ready.
 
-Review recommendations do not themselves grant technical acceptance. The authorized coordinator makes that decision from the evidence. Technical acceptance does not grant product acceptance, publication, release approval, or deployment permission.
+The authorized coordinator decides technical acceptance from the evidence.
 
 ## Output and stop conditions
 
