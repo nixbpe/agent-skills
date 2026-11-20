@@ -17,7 +17,7 @@ Use the outcome, source criteria, owned files, non-goals, verification scope, re
 
 Read these files in full before acting. They own the rules on permissions, ownership, evidence labels, untrusted data, and comments, which this skill does not repeat.
 
-- Read [delivery authority](../principle-authority/SKILL.md), [owned writes](../principle-owned-writes/SKILL.md), [source evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md).
+- Read [owned writes](../principle-owned-writes/SKILL.md), [source evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md).
 - Read [project context](../coordinate-work/references/project-context.md) and [assignment and handoff](../coordinate-work/references/assignment-and-handoff.md), then the actual request, repository instructions, touched contracts, and assigned procedures in full.
 - Read the [enforcement layers principle](../principle-enforcement-layers/SKILL.md).
 - Before any Git mutation or publication, read [Git safety](../deliver-change/references/git-safety.md).

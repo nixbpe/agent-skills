@@ -268,6 +268,15 @@ The `delivery-worker` and `delivery-reviewer` profiles keep their names. For a
 checkout-based installation, run `install` again after `git pull`. It removes
 the links to the old skill names.
 
+### Upgrade delivery to 3.0.0
+
+Version 3.0.0 removes the `principle-authority` skill. `/delivery:principle-authority`
+stops working. Its permission rules live in
+`deliver-change/references/git-safety.md` and
+`coordinate-work/references/assignment-and-handoff.md`, which the delivery
+skills already read. For a checkout-based installation, run `install` again
+after `git pull`. It removes the link to the removed skill.
+
 ### Checkout-based installations
 
 Run from the checkout that owns the installation. For pi:

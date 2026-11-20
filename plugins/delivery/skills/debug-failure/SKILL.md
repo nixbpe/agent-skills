@@ -17,7 +17,7 @@ Use the observed failure, reproduction conditions, affected source contract, env
 
 Read unconditional dependencies before acting and conditional dependencies before the matching operation. Recover truncated reads before proceeding.
 
-- Read [delivery authority](../principle-authority/SKILL.md), [source evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md).
+- Read [source evidence](../principle-source-evidence/SKILL.md) and [trust boundaries](../principle-trust-boundaries/SKILL.md).
 - Read [project context](../coordinate-work/references/project-context.md), the failure evidence, accepted behavior, affected code, and repository command instructions in full.
 - Before Git operations such as regression bisection, read [Git safety](../deliver-change/references/git-safety.md).
 

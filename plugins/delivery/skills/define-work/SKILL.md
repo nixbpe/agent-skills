@@ -17,7 +17,7 @@ Use the request, authorized scope, current accepted decisions, relevant research
 
 Read these files in full before acting. Recover truncated output before proceeding.
 
-- Read [delivery authority](../principle-authority/SKILL.md) and [source evidence](../principle-source-evidence/SKILL.md).
+- Read [source evidence](../principle-source-evidence/SKILL.md).
 - Read [project context](../coordinate-work/references/project-context.md), then the applicable product instructions, templates, accepted source, and supplied evidence in full.
 - For changed interactions, read [experience design](../design-experience/SKILL.md) and the project's design system before specifying the flow.
 

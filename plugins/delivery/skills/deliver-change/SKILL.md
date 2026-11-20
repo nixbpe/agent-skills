@@ -24,7 +24,7 @@ An open product decision, deferred work, or a dependency that has not reached it
 
 Read unconditional dependencies before acting and conditional dependencies before the matching operation.
 
-- Read the [authority](../principle-authority/SKILL.md), [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles. They own the rules on permissions, ownership, evidence labels, severity mapping, and untrusted data, which this skill does not repeat.
+- Read the [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles. They own the rules on ownership, evidence labels, severity mapping, and untrusted data, which this skill does not repeat.
 - Read the [project context contract](../coordinate-work/references/project-context.md).
 - Read [Git safety](references/git-safety.md).
 - Read the [assignment and handoff contract](../coordinate-work/references/assignment-and-handoff.md).

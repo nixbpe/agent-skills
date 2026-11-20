@@ -23,7 +23,7 @@ Obtain the relevant application and platform contracts, project commands, review
 
 Read every listed file completely before acting.
 
-- Read the [authority](../principle-authority/SKILL.md), [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles. They own the rules on permissions, ownership, evidence labels, severity mapping, and untrusted data, which this skill does not repeat.
+- Read the [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles. They own the rules on ownership, evidence labels, severity mapping, and untrusted data, which this skill does not repeat.
 - Read the [enforcement layers principle](../principle-enforcement-layers/SKILL.md).
 - Read the [project context contract](references/project-context.md).
 - Read the [assignment and handoff contract](references/assignment-and-handoff.md).

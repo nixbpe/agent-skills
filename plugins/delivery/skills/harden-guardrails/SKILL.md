@@ -19,7 +19,7 @@ Obtain the correction or the repeated findings with their source (review thread,
 
 Read these files in full before acting. Recover truncated output before proceeding.
 
-- Read [delivery authority](../principle-authority/SKILL.md), [owned writes](../principle-owned-writes/SKILL.md), and [source evidence](../principle-source-evidence/SKILL.md).
+- Read [owned writes](../principle-owned-writes/SKILL.md) and [source evidence](../principle-source-evidence/SKILL.md).
 - Read the [enforcement layers principle](../principle-enforcement-layers/SKILL.md).
 - Read [project context](../coordinate-work/references/project-context.md) and the repository's lint, type, and CI configuration.
 - Before any Git operation, read [Git safety](../deliver-change/references/git-safety.md).

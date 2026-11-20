@@ -1,6 +1,6 @@
 # Project context contract
 
-This contract defines the project facts a delivery action uses. Existing instructions, source files, package scripts, and the current assignment supply those facts. A new configuration file or planning document is not required.
+This contract defines the project facts a delivery action uses. Existing instructions, source files, package scripts, and the current assignment supply those facts. A new configuration file or planning document is not required. Resolve each Markdown link relative to the file that contains it, and resolve project inputs against the working project, not the installed skill directory.
 
 ## Required context by operation
 

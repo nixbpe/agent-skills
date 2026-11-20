@@ -17,7 +17,7 @@ Use the accepted scope, repository security contracts, affected assets and data 
 
 Read these files in full before acting. Recover truncated output before proceeding.
 
-- Read [delivery authority](../principle-authority/SKILL.md), [source evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md).
+- Read [source evidence](../principle-source-evidence/SKILL.md) and [trust boundaries](../principle-trust-boundaries/SKILL.md).
 - Read [project context](../coordinate-work/references/project-context.md), then the accepted source and applicable architecture, authentication, isolation, outbound, privacy, and quality contracts in full.
 - Read the complete [security checklist](references/security-checklist.md). Apply its personal-data, LLM, dependency, and destructive-path sections when those boundaries exist.
 - For repairs, read [implementation](../implement-change/SKILL.md). For repository mutation or publication, read [Git safety](../deliver-change/references/git-safety.md).

@@ -17,7 +17,7 @@ Use the accepted request, affected repository contracts, existing architecture, 
 
 Read these files in full before acting. Recover truncated output before proceeding.
 
-- Read [delivery authority](../principle-authority/SKILL.md) and [source evidence](../principle-source-evidence/SKILL.md).
+- Read [source evidence](../principle-source-evidence/SKILL.md).
 - Read [project context](../coordinate-work/references/project-context.md), then the accepted request and owning architecture references in full.
 - When defining tasks, read [assignment and handoff](../coordinate-work/references/assignment-and-handoff.md).
 - For affected security boundaries, read [boundary security](../secure-boundaries/SKILL.md). For changed interactions, read [experience design](../design-experience/SKILL.md).

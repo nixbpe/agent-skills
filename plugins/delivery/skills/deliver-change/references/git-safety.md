@@ -6,7 +6,7 @@ Implementation, commit, push, PR creation, review posting, thread resolution, me
 
 Use `COMMIT_MODE: none` when commit authority is absent or unclear. With explicit `owned-slice` permission, the named owner may commit only its assigned behavior and proof. One integration owner handles cross-slice commits and any separately authorized publication. Relay the exact target and scope of each permission to that owner.
 
-An invocation that asks for delivery does not silently override `COMMIT_MODE: none`. Finish authorized local work and report the missing permission before any unauthorized operation. A permission for one source, branch, or target does not transfer to another.
+An invocation that asks for delivery does not silently override `COMMIT_MODE: none`. Finish authorized local work and report the missing permission before any unauthorized operation. A permission for one source, branch, or target does not transfer to another. Use authorization already given for the current scope, and do not ask again without a material change. A custom command grants an action only when its documented invocation contract and the user's request authorize it.
 
 ## Branches and checkpoints
 

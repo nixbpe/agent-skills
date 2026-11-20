@@ -17,7 +17,7 @@ Use the assigned user goal or discovery question, intended audience when known, 
 
 Read these files in full before acting. Recover truncated output before proceeding.
 
-- Read [delivery authority](../principle-authority/SKILL.md) and [source evidence](../principle-source-evidence/SKILL.md).
+- Read [source evidence](../principle-source-evidence/SKILL.md).
 - Read [project context](../coordinate-work/references/project-context.md), then the accepted request, project design system, accessibility rules, relevant routes and components, and supplied research in full.
 - If product scope needs refinement, read [work definition](../define-work/SKILL.md). Do not silently convert a design choice into an accepted requirement.
 
