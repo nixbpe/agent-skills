@@ -22,6 +22,24 @@ This contract defines the project facts a delivery action uses. Existing instruc
 
 A field that does not apply creates no new workflow requirement. An unknown required field blocks only the operation that needs it. Repository facts can settle tooling and conventions. Only an authorized person can settle missing product choices or permissions.
 
+## Context assessment
+
+Run this assessment once per project before the first delivery and before unattended operation. Repeat it when repository instructions, CI configuration, or review policy change. It writes nothing unless the request authorizes a named location.
+
+For each row in the table above, report one status.
+
+- `found`: cite the file, script, or instruction that supplies it.
+- `missing`: name the operations it blocks and who can settle it.
+- `not applicable`: give the reason.
+
+Report these three items by name, because their absence stops work late.
+
+- Severity mapping. Without it every review finding stays `unclassified` and blocks readiness.
+- Required CI and full gate commands. Without them merge-ready stays `not verified`.
+- A durable evidence location. Without it repair caps are unenforced across sessions.
+
+Do not invent a missing value or adopt another project's mapping. Propose a mapping only as a labeled proposal for the review policy owner.
+
 ## Review policy
 
 The policy identifies the independent reviewer or review service, required review conditions, and the meaning of each source severity. It also identifies who may accept findings and who may resolve review threads.

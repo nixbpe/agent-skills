@@ -23,8 +23,9 @@ Read each listed file completely before acting. Recover truncated output before 
 - Read the [source and evidence principle](../principle-source-evidence/SKILL.md).
 - Read the [trust boundaries principle](../principle-trust-boundaries/SKILL.md).
 - Read the [enforcement layers principle](../principle-enforcement-layers/SKILL.md).
+- For a bound candidate, read the [candidate binding contract](../qualify-release/references/candidate-binding.md).
 - Read the [project context contract](../coordinate-work/references/project-context.md) and applicable repository instructions.
-- Read the [security review skill](../secure-boundaries/SKILL.md) and its [security checklist](../secure-boundaries/references/security-checklist.md). Apply them statically in this assignment.
+- Read the [security review skill](../secure-boundaries/SKILL.md). When the change touches external input, authorization, tenant scope, secrets, personal data, dependencies, outbound calls, model output, or a destructive operation, also read its [security checklist](../secure-boundaries/references/security-checklist.md). Read the checklist when that is unclear. Apply both statically in this assignment, and state in the report whether the checklist applied.
 
 Read the assigned source, criteria, architecture rules, and affected tests in full at the relevant contract boundaries. Read UI conventions for UI changes and quality rules for evidence claims.
 

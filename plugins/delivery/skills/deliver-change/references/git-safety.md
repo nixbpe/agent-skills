@@ -29,7 +29,7 @@ Before an authorized commit, require all of these conditions.
 - The staged bytes and deletions match the accepted source. When a candidate is bound, reconcile the staged content against its manifest. Ordinary implementation does not need a release manifest.
 - No secret, unexpected generated output, ambient file, or mismatched staged content remains.
 
-Any failed condition blocks the commit. A source-changing formatter or generator invalidates bound evidence under the [source and evidence principle](../../principle-source-evidence/SKILL.md).
+Any failed condition blocks the commit. A source-changing formatter or generator invalidates bound evidence under the [candidate binding contract](../../qualify-release/references/candidate-binding.md).
 
 Use the repository's commit message convention. If none exists, use `<type>: <short description>` with `feat`, `fix`, `refactor`, `test`, `docs`, or `chore`. Keep the subject at most 72 characters without a trailing period. The optional body explains why.
 

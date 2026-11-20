@@ -36,7 +36,7 @@ The coordinator tracks each assignment's owner, state, source identity, open fin
 
 A handoff contains `OWNER`, `CHANGED FILES`, `PROOF`, and any `BLOCKER`. A details link appears only when that artifact exists.
 
-`CHANGED FILES` lists exact paths, command-generated changes, and whether mutation stopped. `PROOF` maps each criterion to `observed pass`, `observed fail`, or `not verified`. It identifies commands, execution scope, results, and evidence locations without raw logs or secrets. Scanner proof includes coverage limitations and the manifest accounting required by the [source and evidence principle](../../principle-source-evidence/SKILL.md).
+`CHANGED FILES` lists exact paths, command-generated changes, and whether mutation stopped. `PROOF` maps each criterion to `observed pass`, `observed fail`, or `not verified`. It identifies commands, execution scope, results, and evidence locations without raw logs or secrets. Scanner proof includes coverage limitations and the manifest accounting required by the [candidate binding contract](../../qualify-release/references/candidate-binding.md) when a candidate is bound.
 
 The handoff distinguishes source-complete work from author-verified work. It records unexercised paths, their blocking prerequisites, and the next owner. A launch command is not service readiness. Service readiness needs an observed health response, connection, or operation. A build or mock pass is not proof of deployment or user behavior.
 

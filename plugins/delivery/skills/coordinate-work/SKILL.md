@@ -1,6 +1,6 @@
 ---
 name: coordinate-work
-description: Coordinate approved software work through explicit ownership, worker evidence, independent review, and bounded integration at the requested readiness state.
+description: Coordinate approved software work through explicit ownership, worker evidence, independent review, and bounded integration at the requested readiness state, or assess whether a project supplies the context delivery needs.
 ---
 
 # Coordinate approved work
@@ -14,6 +14,8 @@ Keep release qualification separate. The main session may implement when project
 ## Inputs
 
 Identify the requested outcome, accepted source and criteria, applicable repository instructions, owned workspace, and authorization limits. Use `STOP_AT: merge-ready` for a request to implement and verify to completion. Otherwise use the requested state, normally `review-ready`. Never silently reduce end-to-end work to a partial result or promote implementation into release qualification.
+
+When the request asks whether a project is ready for delivery work, run the context assessment in the [project context contract](references/project-context.md) and stop after its report.
 
 Obtain the relevant application and platform contracts, project commands, review requirements, and target constraints from existing project evidence. Read the code and its conventions before dispatch. A missing decision that changes behavior, security, scope, or an irreversible operation blocks the affected work. Label harmless assumptions without inventing quality targets.
 
@@ -45,17 +47,18 @@ Read the procedure skills assigned to each operation before performing that oper
 9. At `merge-ready`, obtain one final independent static review for code changes, including integration and changes since slice reviews. Apply repository policy for non-code review. Assign the project's full PR gate commands after writers stop. Typical gate categories are validation, coverage, build, and security, but the repository determines the exact commands and targets.
 10. Batch integration findings and failed gates into one repair. Diagnose the causes before editing. Repair only accepted criterion or contract defects. Run the assigned focused checks and rerun failed gates after repair. Refresh independent review for changed source. If a blocking or unclassified finding, failed gate, or missing proof remains, stop and return the evidence and decision needed. Do not invent an unbounded repair loop.
 
-For an existing PR, use [PR repair](../repair-pr/SKILL.md) when explicitly requested. Its three-round cap replaces this integration repair step. For bound release work, use [release qualification](../qualify-release/SKILL.md) and its separate repair cap. Do not combine caps or reset a consumed cap by changing workflow names.
+For an existing PR, use [PR repair](../repair-pr/SKILL.md) when explicitly requested. Its three-round cap replaces this integration repair step. For bound release work, use [release qualification](../qualify-release/SKILL.md) and its separate repair cap. Do not combine caps or reset a consumed cap by changing workflow names or starting a new session. Read the recorded count before repairing.
 
 ## Unattended operation
 
 Before the user enables automerge, scheduled runs, or an agent loop that ships without a human read, report which of these hold, each as `observed pass`, `observed fail`, or `not verified`:
 
-1. Lint, type, and dependency-boundary checks run in CI and block merge. Repeated mistakes have a guardrail (see [guardrail hardening](../harden-guardrails/SKILL.md)).
-2. Known workarounds and deprecated patterns in the touched areas are cleaned up or listed.
-3. Agents can verify behavior in the running app or test environment and attach evidence.
-4. The loop selects only items reported `ready-for-delivery` under [work definition](../define-work/SKILL.md). It skips `not ready` items and reports them.
-5. Only then automate. Automating an inner loop that still fails multiplies token cost on repairs.
+1. The project context assessment reports no `missing` row for delivery, review, or publication.
+2. Lint, type, and dependency-boundary checks run in CI and block merge. Repeated mistakes have a guardrail (see [guardrail hardening](../harden-guardrails/SKILL.md)).
+3. Known workarounds and deprecated patterns in the touched areas are cleaned up or listed.
+4. Agents can verify behavior in the running app or test environment and attach evidence.
+5. The loop selects only items reported `ready-for-delivery` under [work definition](../define-work/SKILL.md). It skips `not ready` items and reports them.
+6. Only then automate. Automating an inner loop that still fails multiplies token cost on repairs.
 
 Any `observed fail` or `not verified` blocks the recommendation to automate. Enabling automation remains a separate user decision.
 

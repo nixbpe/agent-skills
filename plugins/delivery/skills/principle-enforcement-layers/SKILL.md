@@ -1,6 +1,6 @@
 ---
 name: principle-enforcement-layers
-description: "Use when writing or reviewing code, comments, docs, or rules, and when a human correction or repeated review finding suggests a missing guardrail."
+description: "Use when a human correction or repeated review finding suggests a missing guardrail, or when deciding whether a constraint belongs in a type, lint rule, test, comment, or document."
 ---
 
 # Enforce at the lowest layer

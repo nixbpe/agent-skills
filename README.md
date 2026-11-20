@@ -178,6 +178,7 @@ diff, source identity, accepted criteria, and author verification evidence.
 #### Coordinate work and handle a PR
 
 ```text
+/delivery:coordinate-work Assess whether this project supplies the context delivery needs. Report each context row as found, missing, or not applicable, with the severity mapping, required CI, and evidence location by name. Do not edit files.
 /delivery:coordinate-work Coordinate the approved saved-cart change across API and UI owners. Assign non-overlapping files and verification duties, then obtain independent review. Stop at merge-ready. Do not merge or deploy.
 /delivery:deliver-change Implement issue #42 against its accepted criteria and verify it. You may create a branch, commit, push, and open a PR. Stop with the PR open. Do not merge or deploy.
 /delivery:repair-pr Review PR #42 at its current head against accepted criteria and required checks. You may repair in-scope defects on its branch, commit, and push. Obtain independent review and stop at merge-ready. Do not merge.
