@@ -182,9 +182,10 @@ diff, source identity, accepted criteria, and author verification evidence.
 /delivery:coordinate-work Coordinate the approved saved-cart change across API and UI owners. Assign non-overlapping files and verification duties, then obtain independent review. Stop at merge-ready. Do not merge or deploy.
 /delivery:deliver-change Implement issue #42 against its accepted criteria and verify it. You may create a branch, commit, push, and open a PR. Stop with the PR open. Do not merge or deploy.
 /delivery:repair-pr Review PR #42 at its current head against accepted criteria and required checks. You may repair in-scope defects on its branch, commit, and push. Obtain independent review and stop at merge-ready. Do not merge.
+/delivery:ship-change Implement issue #42 and take its PR to merge-ready. You may create a branch, commit, push, open the PR, request review, post comments, and resolve verified threads. Repair CI failures and review findings within the caps. Do not merge or deploy.
 ```
 
-The last two examples explicitly authorize publication. Remove those permissions
+The last three examples explicitly authorize publication. Remove those permissions
 if you only want local work or findings.
 
 #### Qualify a release

@@ -40,7 +40,7 @@ Read the source criteria, repository instructions, relevant existing code, quali
 4. Stop all writers before final integration checks. Obtain independent static review for code changes and resolve in-scope findings under the project's severity mapping. Without a mapping a finding stays `unclassified`. Do not classify it yourself. Blocking or unclassified findings prevent readiness.
 5. Run the project's required focused checks and full local quality gates through authorized worker operations. Preserve failed or unverified results. Diagnose failures and use the applicable bounded repair procedure rather than weakening checks or skipping required behavior.
 6. If commit, push, and PR creation are each authorized, apply the Git safety commit and publication gates and publish one PR. Otherwise stop before the unauthorized operation.
-7. Wait with finite timeouts for required PR CI and review conditions on the published head. Report merge-ready only after every required condition passes on that head.
+7. Wait with finite timeouts for required PR CI and review conditions on the published head. Report merge-ready only after every required condition passes on that head. For a bounded repair loop over CI and review, use [ship loop](../ship-change/SKILL.md), which runs steps 1-6 here and adds the repair loop.
 
 If the assignment explicitly requires separate PRs or dependency merge gates, finish the first merge-ready PR, identify the next authorized unit, and stop. Do not merge or start dependent follow-up work.
 
