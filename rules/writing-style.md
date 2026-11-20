@@ -48,4 +48,4 @@ Never reword, translate or reformat:
 
 ## Commit messages and comments
 - Commit subject: imperative, ≤ 72 chars, no trailing period. Body explains why, not what.
-- Code comments explain intent or constraints the code cannot show. No comments that restate the code.
+- Write a code comment only when no name, type, test or lint rule can carry the constraint. It states why (external fact, invariant, spec or ticket link) in one or two lines. No comments that restate the code, narrate history or hold a TODO without an issue ID.

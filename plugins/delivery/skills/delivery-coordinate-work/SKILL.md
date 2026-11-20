@@ -25,6 +25,7 @@ Read every listed file completely before acting. Recover truncated reads and res
 - Read the [owned writes principle](../principle-delivery-owned-writes/SKILL.md).
 - Read the [source and evidence principle](../principle-delivery-source-evidence/SKILL.md).
 - Read the [trust boundaries principle](../principle-delivery-trust-boundaries/SKILL.md).
+- Read the [enforcement layers principle](../principle-delivery-enforcement-layers/SKILL.md).
 - Read the [project context contract](references/project-context.md).
 - Read the [assignment and handoff contract](references/assignment-and-handoff.md).
 - Read [Git safety](../delivery-deliver-change/references/git-safety.md).
@@ -45,6 +46,17 @@ Read the procedure skills assigned to each operation before performing that oper
 10. Batch integration findings and failed gates into one repair. Diagnose the causes before editing. Repair only accepted criterion or contract defects. Run the assigned focused checks and rerun failed gates after repair. Refresh independent review for changed source. If a blocking or unclassified finding, failed gate, or missing proof remains, stop and return the evidence and decision needed. Do not invent an unbounded repair loop.
 
 For an existing PR, use [PR repair](../delivery-review-pr/SKILL.md) when explicitly requested. Its three-round cap replaces this integration repair step. For bound release work, use [release qualification](../delivery-qualify-release/SKILL.md) and its separate repair cap. Do not combine caps or reset a consumed cap by changing workflow names.
+
+## Unattended operation
+
+Before the user enables automerge, scheduled runs, or an agent loop that ships without a human read, report which of these hold, each as `observed pass`, `observed fail`, or `not verified`:
+
+1. Lint, type, and dependency-boundary checks run in CI and block merge. Repeated mistakes have a guardrail (see [guardrail hardening](../delivery-harden-guardrails/SKILL.md)).
+2. Known workarounds and deprecated patterns in the touched areas are cleaned up or listed.
+3. Agents can verify behavior in the running app or test environment and attach evidence.
+4. Only then automate. Automating an inner loop that still fails multiplies token cost on repairs.
+
+Any `observed fail` or `not verified` blocks the recommendation to automate. Enabling automation remains a separate user decision.
 
 ## Verification
 

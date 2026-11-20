@@ -69,4 +69,6 @@ Return the current state, candidate triple, source identity, superseded candidat
 
 Report `release-ready` only when all conditions hold on the same unchanged binding. At the repair cap, stop with remaining finding IDs, evidence, and the decision required. If the user stops, preserve source, immutable evidence, resource ownership, and actual results under the handoff protocol.
 
+After release, the project's own signals judge quality: user-perceived performance, shipped change volume, and revert rate. A revert rate counts only reverts. It omits defects fixed in a later change, so track follow-up fix changes beside it. Report these only from data the project provides.
+
 Never deploy, merge, publish a release, destroy infrastructure, rotate credentials, or delete persistent data under this skill alone. Those operations require separate explicit authority and applicable external approvals.

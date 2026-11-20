@@ -161,6 +161,7 @@ operations. Each action can run independently when its inputs are available.
 /delivery:delivery-debug Explain the parser failure from the supplied source and stack trace. Read files only. Do not execute commands, edit files, delegate, or create resources.
 /delivery:delivery-implement-change Implement the approved saved-cart task in src/cart/ and its tests. Preserve the agreed API. Exercise the changed behavior and report evidence. Do not commit or push.
 /delivery:delivery-debug Diagnose the checkout failure using the supplied reproduction and logs. Repair only the affected cart code and verify the fix. Do not change accepted behavior or publish.
+/delivery:delivery-harden-guardrails The reviewer corrected the same setTimeout(0) workaround three times in src/cart/. Add a lint rule or type change that blocks it, with a failure message that states the fix. List existing instances. Do not commit or push.
 ```
 
 #### Review code and security

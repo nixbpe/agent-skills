@@ -22,6 +22,7 @@ Read each listed file completely before acting. Recover truncated output before 
 - Read the [authority principle](../principle-delivery-authority/SKILL.md).
 - Read the [source and evidence principle](../principle-delivery-source-evidence/SKILL.md).
 - Read the [trust boundaries principle](../principle-delivery-trust-boundaries/SKILL.md).
+- Read the [enforcement layers principle](../principle-delivery-enforcement-layers/SKILL.md).
 - Read the [project context contract](../delivery-coordinate-work/references/project-context.md) and applicable repository instructions.
 - Read the [security review skill](../delivery-secure-boundaries/SKILL.md) and its [security checklist](../delivery-secure-boundaries/references/security-checklist.md). Apply them statically in this assignment.
 
@@ -35,7 +36,7 @@ Read the assigned source, criteria, architecture rules, and affected tests in fu
 4. Trace complete sensitive paths through unchanged code. Include entry guards, tenant or permission scope, transaction and lock order, state transitions, failures, commit or rollback, cancellation, and teardown. Report an unresolved path as a context gap, not as reviewed.
 5. Apply the following three lenses to the same source and criteria. Return one consolidated findings batch, not separate serial review workflows.
 
-   - Correctness and maintainability cover behavior, readability, architecture, performance, and simplification. Check dependency direction, canonical helper reuse, explicit types, hidden fallback behavior, duplicated policy, and complexity moved rather than removed. Suggest a concrete remedy that removes concepts or restores ownership.
+   - Correctness and maintainability cover behavior, readability, architecture, performance, and simplification. Check dependency direction, canonical helper reuse, explicit types, hidden fallback behavior, duplicated policy, and complexity moved rather than removed. Flag a copied workaround or deprecated pattern, a symptom-masking fix (zero-delay timer, sleep, broad catch), a comment that restates code or lacks a source for its why, an unrequested Markdown file, and a new prose rule that a type, lint rule, or test could enforce. Suggest a concrete remedy that removes concepts or restores ownership.
    - Security covers the applicable threat boundaries and checklist controls. A general review does not prove that sensitive paths ran. A missing cache identity input that can expose another user's data retains the source label `Critical` when that label applies, and requires the project's explicit blocking mapping.
    - Observable acceptance compares requirement-linked producer evidence with every accepted criterion. Preserve existing criterion IDs. Judge the evidence without running the scenario yourself.
 
