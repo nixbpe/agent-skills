@@ -17,6 +17,9 @@ RESOURCE_ROOTS = {
     "commands": ("commands",),
     "agents": ("plugins/delivery/agents",),
 }
+# Earlier versions generated this file. pi users keep their own AGENTS.md, so
+# the installer releases the old record and never writes, replaces or deletes it.
+RELEASED_FILES = {"pi": (".pi/agent/AGENTS.md",)}
 
 
 def digest(content):
@@ -107,9 +110,9 @@ def validate_sources():
 
 
 def desired_files(agent, instructions):
-    instruction_path = ".claude/CLAUDE.md" if agent == "claude" else ".pi/agent/AGENTS.md"
-    files = {instruction_path: {"kind": "file", "sha256": digest(instructions)}}
+    files = {}
     if agent == "claude":
+        files[".claude/CLAUDE.md"] = {"kind": "file", "sha256": digest(instructions)}
         for directory, roots in RESOURCE_ROOTS.items():
             pattern = "*/SKILL.md" if directory == "skills" else "*.md"
             for root in roots:
@@ -187,7 +190,10 @@ def plan(home, agent, mode, instructions):
         return actions
     if not state and mode == "check":
         raise ValueError(agent + ": no installation record")
-    old_files = state.get("files", {})
+    old_files = dict(state.get("files", {}))
+    for relative in RELEASED_FILES.get(agent, ()):
+        if old_files.pop(relative, None) is not None:
+            print(agent + ": leaving " + str(safe_path(home, relative)) + " in place; the installer no longer manages it")
     for relative, entry in old_files.items():
         if not owned_path(agent, relative):
             raise ValueError("Invalid ownership record: " + relative)

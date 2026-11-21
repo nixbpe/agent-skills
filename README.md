@@ -29,8 +29,8 @@ change global instructions or install pi resources.
 
 ### pi
 
-Requires Python 3.9 or newer. The installer installs both suites and personal
-instructions for pi:
+Requires Python 3.9 or newer. The installer registers both suites as a pi
+package. It never writes, replaces or deletes `~/.pi/agent/AGENTS.md`:
 
 ```sh
 git clone https://github.com/nixbpe/agent-skills.git

@@ -10,6 +10,10 @@ import unittest
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def present_path(path):
+    return path.exists() or path.is_symlink()
+
+
 class SetupSafetyTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix="agent-skills-test-")
@@ -70,10 +74,34 @@ class SetupSafetyTests(unittest.TestCase):
         self.run_setup("uninstall")
 
     def test_conflict_in_second_agent_prevents_all_changes(self):
-        self.put(".pi/agent/AGENTS.md", "Existing personal instructions\n")
+        self.put(".pi/agent/settings.json", json.dumps({"packages": "not-an-array"}))
         before = self.snapshot()
         self.run_setup("install", success=False)
         self.assertEqual(self.snapshot(), before)
+
+    def test_pi_install_never_writes_agents_file(self):
+        self.run_setup("install", "--agent", "pi")
+        self.assertFalse(present_path(self.home / ".pi/agent/AGENTS.md"))
+        self.run_setup("check", "--agent", "pi")
+
+    def test_pi_install_and_uninstall_keep_existing_agents_file(self):
+        agents_file = self.put(".pi/agent/AGENTS.md", "Existing personal instructions\n")
+        self.run_setup("install", "--agent", "pi")
+        self.run_setup("check", "--agent", "pi")
+        self.run_setup("uninstall", "--agent", "pi")
+        self.assertEqual(agents_file.read_text(), "Existing personal instructions\n")
+
+    def test_legacy_pi_agents_record_is_released_without_touching_the_file(self):
+        self.run_setup("install", "--agent", "pi")
+        agents_file = self.put(".pi/agent/AGENTS.md", "Edited after a legacy install\n")
+        state_path = self.home / ".local/state/agent-skills/pi.json"
+        state = json.loads(state_path.read_text())
+        state["files"][".pi/agent/AGENTS.md"] = {"kind": "file", "sha256": "0" * 64}
+        state_path.write_text(json.dumps(state))
+        self.run_setup("install", "--agent", "pi")
+        self.assertNotIn(".pi/agent/AGENTS.md", json.loads(state_path.read_text())["files"])
+        self.run_setup("uninstall", "--agent", "pi")
+        self.assertEqual(agents_file.read_text(), "Edited after a legacy install\n")
 
     def test_modified_owned_file_blocks_update_and_uninstall(self):
         self.run_setup("install")
