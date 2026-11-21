@@ -29,7 +29,7 @@ Read the assigned source, criteria, architecture rules, and affected tests in fu
 ## Steps
 
 1. Confirm the source, criteria, phase, and scope. Account for every changed file and hunk, including deletions. Record unrelated changes separately. Before binding, identify the reviewed source without requiring a release manifest.
-2. Read the complete changed test scenarios, setup, mocks, teardown, and independent assertion oracles. Check whether the assertions detect the regression and cover boundaries, failures, state changes, and relevant interleavings.
+2. Read the complete changed test scenarios, setup, mocks, teardown, and independent assertion oracles. Check whether the assertions detect the regression and cover boundaries, failures, state changes, and relevant interleavings. When a test could pass without the change, or a mechanism looks unnecessary, request a mutation check from the worker: remove the change or the mechanism and report which tests fail. A mechanism whose removal fails no test is unproven, and the remedy is to delete it or add the test that needs it.
 3. Read each affected function or type in full, its imports, shared state, consumers, and tests. Read whole files when symbol boundaries leave behavior unclear. For generated changes, inspect the generator, contract inputs, emitted declarations, and drift evidence.
 4. Trace complete sensitive paths through unchanged code. Include entry guards, tenant or permission scope, transaction and lock order, state transitions, failures, commit or rollback, cancellation, and teardown. Report an unresolved path as a context gap, not as reviewed.
 5. Apply the following three lenses to the same source and criteria. Return one consolidated findings batch, not separate serial review workflows.

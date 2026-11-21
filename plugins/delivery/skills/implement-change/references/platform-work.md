@@ -16,13 +16,17 @@ Include command-generated files in write ownership. Stop if required output lies
 
 The application owner writes schema migrations and application logs, metrics, and traces. The assigned platform owner applies migrations in authorized environments and owns rollback evidence, collectors, dashboards, alerts, and health checks. The project may assign both responsibilities to one actor, but each remains explicit.
 
-During sibling edits, run only permitted isolated checks. Shared builds, formatters, suites, migrations, and release gates wait for the coordinator's authorization and a stable workspace. Diagnose setup or gate failures before changing configuration. After candidate binding, perform no source mutation during the validation window. Return repairs for a new binding.
+During sibling edits, run only permitted isolated checks. Shared builds, formatters, suites, migrations, and release gates wait for the coordinator's authorization and a stable workspace. The coordinator's own runs follow the same rule. Run heavy gates one at a time unless the project documents that they are safe to run together, and apply the stable-tree rule in [source evidence](../../principle-source-evidence/SKILL.md). Diagnose setup or gate failures before changing configuration. After candidate binding, perform no source mutation during the validation window. Return repairs for a new binding.
 
 ## Migrations and rollback
 
 Before applying a migration, identify the exact environment, data affected, required privileges, recovery method, backup assumptions, downtime constraints, and authorized operator. Use safe fixtures in an authorized local or non-production environment for the assigned proof.
 
 A migration plan or successful forward operation does not prove safe rollback. Claim reversibility only after observing the reversal and checking the restored behavior and data. Name irreversible transformations, restoration prerequisites, and untested recovery steps explicitly. Never delete persistent volumes to make a failed migration appear successful.
+
+Never edit a migration that any environment or the base branch has applied. Add a new migration ordered after it. When a merge brings two migrations with the same number, the later change renumbers or rewrites its own unapplied migration. If both are applied somewhere, stop for a decision. A migration that renames or narrows stored values keeps existing rows readable: old audit action names, enum values, and fields that earlier rows left empty.
+
+Before a gate that touches a database, compare the database's migration ledger with the branch's migrations. A ledger from another branch's history makes the result `not verified`. Reset or recreate the database only when it is task-owned or the reset is authorized, and report it.
 
 ## Resource readiness and proof
 

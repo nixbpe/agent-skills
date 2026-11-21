@@ -38,7 +38,7 @@ Read these files in full before acting. They own the rules on permissions, owner
 
 ## Verification
 
-Report each executed command with its scope and the behavior exercised, using the source evidence labels. List skipped and proposed commands separately. For asynchronous behavior, identify coverage of ordering, retries, identity changes, and late completions. For a changed user-visible behavior, cite the feature by the name in the project's existing UI or docs and attach the observation (screenshot, recording, or state trace) from the running app when the project can produce one. Otherwise report it `not verified`. No-edit results remain author-produced evidence, not independent acceptance.
+Report each executed command with its scope and the behavior exercised, using the source evidence labels. A new or changed test must fail without the change it covers. Observe that failure, or report the test as `not verified` proof. Assert the settled state after the behavior completes, not a value that appears for one render or one tick. List skipped and proposed commands separately. For asynchronous behavior, identify coverage of ordering, retries, identity changes, and late completions. For a changed user-visible behavior, cite the feature by the name in the project's existing UI or docs and attach the observation (screenshot, recording, or state trace) from the running app when the project can produce one, through the attachment method in [project context](../coordinate-work/references/project-context.md). Otherwise report it `not verified`. No-edit results remain author-produced evidence, not independent acceptance.
 
 When evidence is bound, include the exact assigned binding.
 

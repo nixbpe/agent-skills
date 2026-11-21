@@ -19,6 +19,8 @@ Use a commit SHA for committed work. For uncommitted work, identify the changed 
 
 Ordinary implementation and review do not require a release candidate manifest. When the source changes, repeat the affected checks and reviews. Do not reuse a verdict merely because the branch name is unchanged.
 
+A gate result counts only for a tree that stayed unchanged while it ran. Record the HEAD and the working tree identity before and after each gate run. If either changed during the run, including through your own edit, a merge, or another writer, report that run as `not verified` and run it again on the stable tree. A failure seen while other heavy gates ran alongside is evidence of contention until it reproduces alone.
+
 ## Bind a release candidate
 
 Binding applies only to release qualification or an assignment that names a bound candidate. Before binding, or before judging evidence against a binding, read the [candidate binding contract](../qualify-release/references/candidate-binding.md). Any candidate file change invalidates the binding.

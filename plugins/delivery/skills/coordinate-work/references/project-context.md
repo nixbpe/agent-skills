@@ -15,6 +15,8 @@ This contract defines the project facts a delivery action uses. Existing instruc
 | Focused verification commands | Package scripts, existing checks, and assignment | Implementation and repair |
 | Static enforcement (lint, type, boundary checks) and the repository's comment and docs policy | Lint and CI configuration, repository instructions | Implementation, review, and guardrail hardening |
 | Observation tooling and feature names | Running app, test environment, existing UI and docs | Verifying user-visible behavior |
+| UI evidence attachment method | Project instructions or review policy | Attaching screenshots or recordings to a PR |
+| Local database and its migration ledger | Project setup scripts and the assigned environment | Running a gate that touches a database |
 | Full gates and required CI | Project scripts and workflow configuration | Claiming merge-ready or release-ready |
 | Review provider and severity mapping | Project review policy | Independent review and PR repair |
 | Target, credentials, resource owner, and cleanup limits | Authorized environment assignment | Platform work and runtime checks with external effects |
@@ -69,6 +71,8 @@ Claude plugin installations expose these profiles as `delivery:delivery-worker` 
 A skill cannot create child sessions, install an extension, or enforce a permission boundary by itself. When the required runtime capability is missing, report it. Sequential self-review cannot replace a required independent reviewer.
 
 ## Evidence storage
+
+When the available tooling cannot upload images to a PR, use the project's stated attachment method. Without one, report the observation as local evidence and name the gap. One method a project may authorize is a branch that holds only evidence assets, linked by commit-pinned URLs, which leaves the PR head unchanged. It needs branch-creation and push permission. Before using it, check the repository's visibility and inspect every image for secrets and personal data.
 
 Use the existing issue, handoff, or evidence location. Create a separate artifact only when requested or when the project requires one. Link evidence that exists. Never report an invented file path as a delivered artifact.
 

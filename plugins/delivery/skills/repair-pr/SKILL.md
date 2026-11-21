@@ -45,7 +45,7 @@ Read the accepted source, relevant implementation and tests, failed check logs, 
    4. Request independent review for the new head with the addressed finding IDs. Use the project's configured review request mechanism rather than a hardcoded provider command.
    5. Wait for CI and review with finite timeouts.
    6. After independent review completes on that head, compare its findings with the repair diff and proof. Reply with closing evidence and resolve only verified threads when thread-resolution authority exists. Never resolve a finding the reviewer still upholds.
-   7. Recheck the head and every merge-ready condition. A new head invalidates claims tied only to the old head. Stop early when all conditions pass.
+   7. Recheck the head, the base, and every merge-ready condition. A new head invalidates claims tied only to the old head. Fetch the base before each push and before reporting merge-ready. A base that moved on the PR's changed paths blocks the round under [merging the base](../deliver-change/references/git-safety.md#merging-the-base). Stop early when all conditions pass.
 
 Do not rewrite history, force-push, retarget the PR, touch another branch, merge, or release. Use one repair owner or disjoint assignments only when ownership requires them. Do not create an actor for every finding.
 

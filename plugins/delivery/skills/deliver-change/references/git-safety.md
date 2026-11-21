@@ -18,6 +18,14 @@ A scoped diff or isolated worktree provides a checkpoint without a commit. Save 
 
 Never use repository-wide `git reset --hard`, `git restore`, `git clean`, or stash in a dirty or shared worktree. Restore only authorized owned paths or hunks after confirming that no later writer touched them. Unclear ownership blocks recovery. Preserve user changes and partial work on stop or handover.
 
+## Merging the base
+
+Fetch the base immediately before merging it and again immediately before the push that follows. A base that moved in between needs a new merge and new evidence, not a push of the stale result.
+
+A textual conflict inside one behavior is a repair for its owner. When the two sides are competing implementations of the same contract, such as two migrations with one number, two versions of one endpoint, or a change that the base already delivers, the choice is a product or ownership decision. Stop, list the overlapping paths and contracts, and return the options: keep the base and drop the duplicate, keep this change's side, or combine them under a named owner. Do not pick a side to make the merge complete.
+
+Never edit a migration that the base or any environment has already applied. Follow the [platform work contract](../../implement-change/references/platform-work.md#migrations-and-rollback). A merge commit changes the source, so earlier review and gate evidence covers only the paths the merge left unchanged.
+
 ## Commit gates
 
 Before an authorized commit, require all of these conditions.
