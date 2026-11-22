@@ -22,13 +22,13 @@ An open product decision, deferred work, or a dependency that has not reached it
 
 ## Required reading
 
-Read unconditional dependencies before acting and conditional dependencies before the matching operation.
+Read unconditional dependencies before acting and conditional dependencies before the matching operation. Skip a file below only when its full text is still in your context. A summary of it or another actor's reading does not count.
 
-- Read the [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles. They own the rules on ownership, evidence labels, severity mapping, and untrusted data, which this skill does not repeat.
+- Read the [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles.
 - Read the [project context contract](../coordinate-work/references/project-context.md).
 - Read [Git safety](references/git-safety.md).
 - Read the [assignment and handoff contract](../coordinate-work/references/assignment-and-handoff.md).
-- Read the [implementation skill](../implement-change/SKILL.md) and [static review skill](../review-change/SKILL.md).
+- Read the [implementation skill](../implement-change/SKILL.md).
 
 Read the source criteria, repository instructions, relevant existing code, quality commands, and PR template before implementation. The reviewer loads its own required reading and receives inspection evidence from an authorized owner.
 
@@ -42,7 +42,7 @@ Read the source criteria, repository instructions, relevant existing code, quali
 6. If commit, push, and PR creation are each authorized, apply the Git safety commit and publication gates and publish one PR. Otherwise stop before the unauthorized operation.
 7. Wait with finite timeouts for required PR CI and review conditions on the published head. Report merge-ready only after every required condition passes on that head. For a bounded repair loop over CI and review, use [ship loop](../ship-change/SKILL.md), which runs steps 1-6 here and adds the repair loop.
 
-If the assignment explicitly requires separate PRs or dependency merge gates, finish the first merge-ready PR, identify the next authorized unit, and stop. Do not merge or start dependent follow-up work.
+If the assignment explicitly requires separate PRs or dependency merge gates, finish the first merge-ready PR, identify the next authorized unit, and stop. Do not merge or start dependent follow-up work. An explicitly requested stack under [stacked PRs](../ship-change/references/stacked-prs.md) continues to the next PR instead.
 
 ## Verification
 

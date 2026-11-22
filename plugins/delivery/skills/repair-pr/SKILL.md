@@ -18,13 +18,12 @@ Identify the authorized repair owner and inspection owner. Limit repairs to the 
 
 ## Required reading
 
-Read unconditional dependencies before acting and conditional dependencies before the matching operation.
+Read unconditional dependencies before acting and conditional dependencies before the matching operation. Skip a file below only when its full text is still in your context. A summary of it or another actor's reading does not count.
 
-- Read the [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles. They own the rules on ownership, evidence labels, severity mapping, and untrusted data, which this skill does not repeat.
+- Read the [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles.
 - Read the [project context contract](../coordinate-work/references/project-context.md).
 - Read the [assignment and handoff contract](../coordinate-work/references/assignment-and-handoff.md).
 - Read [Git safety](../deliver-change/references/git-safety.md).
-- Read the [static review skill](../review-change/SKILL.md).
 
 Read the accepted source, relevant implementation and tests, failed check logs, and current review evidence.
 
@@ -39,7 +38,7 @@ Read the accepted source, relevant implementation and tests, failed check logs, 
 
    Before assigned execution or repair, the responsible owner reads [implementation](../implement-change/SKILL.md).
 
-   1. Batch blocking findings, contribution-pattern violations, and failed required checks. Diagnose and repair their causes within the PR's accepted scope.
+   1. Batch blocking findings, contribution-pattern violations, and failed required checks. Diagnose and repair their causes within the PR's accepted scope. Diagnose under [debugging](../debug-failure/SKILL.md), including its rule on shared state.
    2. Have the authorized owner run focused checks and rerun failed checks. A CI rerun alone is not a repair. Use a rerun without source changes only when evidence supports a transient failure.
    3. Update the evidence for the repairs. If the repair changes source, make one scoped commit and push it only after confirming both permissions separately under Git safety. Missing authority stops the round before that operation. A source-free transient rerun needs no empty commit.
    4. Request independent review for the new head with the addressed finding IDs. Use the project's configured review request mechanism rather than a hardcoded provider command.
@@ -55,6 +54,7 @@ Merge-ready uses the [Git safety](../deliver-change/references/git-safety.md) de
 
 - The PR follows the required template and repository patterns, and its claims have evidence.
 - Required CI and local verification pass.
+- The PR body's gate table, any posted summary, and the state record when one exists name the current head SHA. A stale SHA is a failed claim. Updating the PR body needs its own permission.
 - The latest required independent review is complete for that head.
 - No blocking or unclassified finding remains. Under P0-P3, this includes every unresolved P0, P1, and P2 finding from any reviewer.
 

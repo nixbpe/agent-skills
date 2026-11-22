@@ -21,9 +21,9 @@ Obtain the relevant application and platform contracts, project commands, review
 
 ## Required reading
 
-Read every listed file completely before acting.
+Read every listed file completely before acting. Skip a file below only when its full text is still in your context. A summary of it or another actor's reading does not count.
 
-- Read the [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles. They own the rules on ownership, evidence labels, severity mapping, and untrusted data, which this skill does not repeat.
+- Read the [owned writes](../principle-owned-writes/SKILL.md), [source and evidence](../principle-source-evidence/SKILL.md), and [trust boundaries](../principle-trust-boundaries/SKILL.md) principles.
 - Read the [enforcement layers principle](../principle-enforcement-layers/SKILL.md).
 - Read the [project context contract](references/project-context.md).
 - Read the [assignment and handoff contract](references/assignment-and-handoff.md).
